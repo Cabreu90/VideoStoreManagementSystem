@@ -1,0 +1,464 @@
+﻿Option Explicit On
+Option Strict On
+
+Imports System.IO
+Imports System.Data                                     'Data Access (DataSet)
+Imports System.Data.OleDb                               'OLEDB Provider
+Imports System.Configuration                            'Configuration File for DB Connection
+
+''' <summary>
+''' Store and manage DVD Objects in memory and load/save them from TEXT FILE. 
+''' </summary>
+''' <remarks>Serialization enabled for this class.</remarks>
+<Serializable()> _
+Public Class DVDList
+    Inherits BusinessCollectionBase
+
+#Region "Public Properties:"
+    Public Shadows ReadOnly Property count As Integer
+        Get
+            Return MyBase.Dictionary.Count
+        End Get
+    End Property
+
+    Public Property Item(ByVal key As String) As DVD
+        Get
+
+            Return CType(MyBase.Dictionary.Item(key), DVD)
+        End Get
+
+        Set(ByVal value As DVD)
+
+
+            If MyBase.Dictionary.Contains(key) Then
+
+                MyBase.Dictionary.Item(key) = value
+            Else
+
+                Throw New System.ArgumentException("ID Not found")
+            End If
+        End Set
+    End Property
+#End Region
+
+#Region "Public Methods:"
+    Public Sub Add(ByVal key As String, ByVal objDVD As DVD)
+
+        Try
+
+            MyBase.Dictionary.Add(key, objDVD)
+
+        Catch objX As ArgumentNullException
+
+            Throw New System.ArgumentNullException("Invalid Key Error: " & objX.Message)
+
+        Catch objY As ArgumentException
+
+            Throw New System.ArgumentException("Duplicate Key Error: " & objY.Message)
+
+        Catch objE As Exception
+
+            Throw New System.Exception("Add Method Error: " & objE.Message)
+        End Try
+    End Sub
+
+    Public Sub Add(ByVal par1 As String, ByVal par2 As String, ByVal par3 As String, ByVal par4 As Rating, _
+                  ByVal par5 As Decimal, ByVal par6 As Decimal, ByVal par7 As Decimal, _
+                  ByVal par8 As MovieCategory, ByVal par9 As DVDFormat)
+
+        Try
+
+            Dim objDVD As New DVD
+
+            With objDVD
+                .IDNumber = par1
+                .Title = par2
+                .Description = par3
+                .Rating = par4
+                .SalePrice = par5
+                .RentalRate = par6
+                .LateFee = par7
+                .Category = par8
+                .Format = par9
+                .Available = True
+
+            End With
+
+            MyBase.Dictionary.Add(objDVD.IDNumber, objDVD)
+
+        Catch objX As ArgumentNullException
+
+            Throw New System.ArgumentNullException("Invalid Key Error: " & objX.Message)
+
+        Catch objY As ArgumentException
+
+            Throw New System.ArgumentException("Duplicate Key Error: " & objY.Message)
+
+        Catch objE As Exception
+
+            Throw New System.Exception("Add Method Error: " & objE.Message)
+        End Try
+
+    End Sub
+
+    Public Function Edit(ByVal key As String, ByVal objDVD As DVD) As Boolean
+
+        Try
+
+            If MyBase.Dictionary.Contains(key) Then
+
+                MyBase.Dictionary.Item(key) = objDVD
+
+                Return True
+            Else
+
+                Return False
+            End If
+
+        Catch objX As ArgumentNullException
+
+            Throw New System.ArgumentNullException("Invalid Key Error: " & objX.Message)
+
+        Catch objE As Exception
+
+            Throw New System.Exception("EditItem Error: " & objE.Message)
+        End Try
+    End Function
+
+    Public Function Edit(ByVal par1 As String, ByVal par2 As String, ByVal par3 As String, ByVal par4 As Rating, _
+                          ByVal par5 As Decimal, ByVal par6 As Decimal, ByVal par7 As Decimal, _
+                          ByVal par8 As MovieCategory, ByVal par9 As DVDFormat) As Boolean
+
+        Try
+
+            Dim objDVD As DVD
+
+            objDVD = CType(MyBase.Dictionary.Item(par1), DVD)
+
+            If objDVD Is Nothing Then
+
+                Return False
+            Else
+
+                With objDVD
+                    .IDNumber = par1
+                    .Title = par2
+                    .Description = par3
+                    .Rating = par4
+                    .SalePrice = par5
+                    .RentalRate = par6
+                    .LateFee = par7
+                    .Category = par8
+                    .Format = par9
+                    .Available = True
+                End With
+
+                Return True
+            End If
+
+        Catch objX As ArgumentNullException
+
+            Throw New System.ArgumentNullException("Invalid Key Error: " & objX.Message)
+
+        Catch objE As Exception
+
+            Throw New System.Exception("EditItem Error: " & objE.Message)
+        End Try
+    End Function
+
+    Public Function Remove(ByVal key As String) As Boolean
+
+        Try
+
+            If MyBase.Dictionary.Contains(key) Then
+
+                MyBase.Dictionary.Remove(key)
+
+                Return True
+            Else
+
+                Return False
+            End If
+
+        Catch objX As ArgumentNullException
+
+            Throw New System.ArgumentNullException("Invalid Key Error: " & objX.Message)
+
+        Catch objE As Exception
+
+            Throw New System.Exception("Remove Error: " & objE.Message)
+        End Try
+    End Function
+
+    Public Function Print(ByVal key As String) As Boolean
+
+        Try
+
+            Dim objDVD As DVD
+
+            objDVD = CType(MyBase.Dictionary.Item(key), DVD)
+
+            If objDVD Is Nothing Then
+
+                Return False
+            Else
+
+                objDVD.Print()
+
+                Return True
+            End If
+
+        Catch objX As ArgumentNullException
+
+            Throw New System.ArgumentNullException("Invalid Key Error: " & objX.Message)
+
+        Catch objE As Exception
+
+            Throw New System.Exception("PrintDVD Error: " & objE.Message)
+        End Try
+    End Function
+
+    Public Sub PrintAll()
+
+        Try
+
+            Dim objDictionaryEntry As DictionaryEntry
+            Dim objDVD As DVD
+
+            For Each objDictionaryEntry In MyBase.Dictionary
+
+                objDVD = CType(objDictionaryEntry.Value, DVD)
+
+                objDVD.Print()
+            Next
+
+        Catch objE As Exception
+
+            Throw New System.Exception("PrintAll Method Error: " & objE.Message)
+        End Try
+    End Sub
+
+    Public Shadows Sub Clear()
+
+        Try
+
+            MyBase.Dictionary.Clear()
+
+        Catch objex As Exception
+
+            Throw New System.Exception("Unexpected error clearing List. " & objex.Message)
+        End Try
+    End Sub
+
+#End Region
+
+#Region "Helper Methods:"
+
+    Public Function ToArray() As DVD()
+
+        Dim arrDVDList(MyBase.Dictionary.Count - 1) As DVD
+
+
+        MyBase.Dictionary.Values.CopyTo(arrDVDList, 0)
+        Return arrDVDList
+    End Function
+#End Region
+
+#Region "Public Data Access Methods:"
+    Public Shared Function Create() As DVDList
+        Return DataPortal_Create()
+    End Function
+
+    Public Sub Load(ByVal Key As String)
+
+        DataPortal_Fetch(Key)
+    End Sub
+
+    Public Sub Save()
+        'Call DataPortal_Save() method if the object is dirty.
+        If IsDirty Then
+            DataPortal_Save()
+        End If
+    End Sub
+
+    Public Sub ImmediateDelete(ByVal Key As String)
+        DataPortal_Delete(Key)
+    End Sub
+#End Region
+#Region " Deferred Delete"
+
+    'Search and Find the first Dirty Child Object
+    Public Overrides Function DeferredDelete(ByVal Key As String) As Boolean
+
+        Dim objDEntry As DictionaryEntry
+        Dim objItem As DVD
+
+        Try
+
+            'Search for Object to Mark Deferred Delete
+            For Each objDEntry In MyBase.Dictionary
+                objItem = CType(objDEntry.Value, DVD)
+                'Find object
+                If objItem.IDNumber = Key Then
+                    'If NOT New 
+                    If Not objItem.IsNew Then
+                        'Mark Object for Deletion
+                        objItem.DeferredDelete()
+                        'Return True and exit
+                        Return True
+                    Else
+                        'Do not mark for deletion if the object found isNew.
+                        'return false and exit
+                        Return False
+                    End If
+                End If
+            Next
+
+            'Search Completed. Object Not found return False
+            Return False
+
+        Catch objE As Exception
+            Throw New System.Exception("Deferred Delete Method Error: " & objE.Message)
+        End Try
+    End Function
+#End Region
+
+
+#Region "Protected Data Access Methods:"
+    ' Empty methods for future update
+    Protected Shared Function DataPortal_Create() As DVDList
+        Return Nothing
+    End Function
+
+    Protected Sub DataPortal_Fetch(ByVal Key As String)
+        'Temporary implementation
+        Try
+            Dim strLine As String
+
+            If Not File.Exists("DVDData.txt") Then
+
+                File.Create("DVDData.txt").Close()
+            End If
+
+            Dim objDataFile As New StreamReader("DVDData.txt")
+
+            Do While objDataFile.Peek <> -1
+
+                strLine = objDataFile.ReadLine
+
+                Dim tempArray() As String = Split(strLine, ",")
+
+                Add(tempArray(0), tempArray(1), tempArray(2), CType(System.Enum.Parse(GetType(Rating), tempArray(3)), Rating), _
+                CDec(tempArray(4)), CDec(tempArray(5)), CDec(tempArray(6)), CType(System.Enum.Parse(GetType(MovieCategory), _
+                tempArray(7)), MovieCategory), CType(System.Enum.Parse(GetType(DVDFormat), tempArray(8)), DVDFormat))
+            Loop
+
+            objDataFile.Close()
+
+        Catch objE As Exception
+
+            Throw New System.Exception("Fetch Error: " & objE.Message)
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' SAVES all objects from database by Iterating through Collection, and 
+    ''' calling Each ITEM object SAVE() method so each Item saves itself
+    ''' </summary>
+    Protected Sub DataPortal_Save()
+        'Iterates through Collection, Calling Each CHILD object.Save() method
+        'CHILD Objects save themselves
+        'Step A- Begin Error trapping
+        Try
+            '    'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
+            '    Dim objDictionaryEntry As DictionaryEntry
+            '    Dim objChild As DVD
+
+            '    'Step 2-Use For..Each loop to iterate through Collection
+            '    For Each objDictionaryEntry In MyBase.Dictionary
+            '        'Step 3-Convert DictionaryEntry pointer returned to Type Person
+            '        objChild = CType(objDictionaryEntry.Value, DVD)
+
+            '        'Step 4-Call Child to Save itself
+            '        objChild.Save()
+
+            '    Next
+
+
+            Dim objWrite As New StreamWriter("DVDData.txt")
+
+            Dim objDictionaryEntry As DictionaryEntry
+            Dim objDVD As DVD
+
+            For Each objDictionaryEntry In MyBase.Dictionary
+
+                objDVD = CType(objDictionaryEntry.Value, DVD)
+
+                objWrite.WriteLine(objDVD.IDNumber & "," & _
+                objDVD.Title & "," & _
+                objDVD.Description & "," & _
+                objDVD.Rating.ToString & "," & _
+                objDVD.SalePrice.ToString & "," & _
+                objDVD.RentalRate.ToString & "," & _
+                objDVD.LateFee.ToString & "," & _
+                objDVD.Category.ToString & "," & _
+                objDVD.Format.ToString)
+            Next
+
+            objWrite.Close()
+
+
+            'Step B-Traps for general exceptions.  
+        Catch objE As Exception
+            'Step C-Throw an general exceptions
+            Throw New System.Exception("Dataportal Save Error! " & objE.Message)
+        End Try
+    End Sub
+
+
+    Protected Sub DataPortal_Update()
+
+    End Sub
+
+    Protected Sub DataPortal_Insert()
+
+    End Sub
+
+    Protected Sub DataPortal_Delete(ByVal Key As String)
+        'Iterates through Collection, Calling Each CHILD object.Delete() method
+        'CHILD Objects Delete themselves
+
+        'Step A- Begin Error trapping
+        Try
+            'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
+            Dim objDictionaryEntry As DictionaryEntry
+            Dim objItem As DVD
+
+            'Step 2-Use For..Each loop to iterate through Collection
+            For Each objDictionaryEntry In MyBase.Dictionary
+                'Step 3-Convert DictionaryEntry pointer returned to Type Person
+                objItem = CType(objDictionaryEntry.Value, DVD)
+
+                'Step 4-Find target object based on key
+                'YOU WILL NEED TO SELECT THE CORRECT PROPERTY
+                If objItem.IDNumber = Key Then
+
+                    'Step 5-Object deletes itself
+                    objItem.ImmediateDelete(Key)
+
+                End If
+
+            Next
+            'Step B-Traps for general exceptions.  
+        Catch objE As Exception
+            'Step C-Throw an general exceptions
+            Throw New System.Exception("Dataportal Delete Error! " & objE.Message)
+        End Try
+
+
+    End Sub
+
+#End Region
+
+
+End Class

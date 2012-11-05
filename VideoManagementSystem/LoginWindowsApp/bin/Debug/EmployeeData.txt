@@ -1,0 +1,5 @@
+222-22-2222,Angel,Rodriguez,11/20/1985,124 174st,348-222-2222,Director,angel,222
+111-11-1111,Joe,Smith,4/12/1896,123 Adress,347-111-1111,Manager,joe,111
+555-55-5555,Nancy,Rivera,5/7/1986,345 3rd st,347-555-5555,Secretary,nancy,555
+444-44-4444,Mary,Johnson,3/18/1984,100 Canal st,347-444-4444,VP,mary,444
+333-33-3333,Sam,Peterson,1/13/1984,234 162st,347-333-3333,Assistant,sam,333
