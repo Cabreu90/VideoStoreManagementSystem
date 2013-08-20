@@ -8,13 +8,18 @@ Imports System.Configuration                            'Configuration File for 
 Imports System.Collections                              'Collection Library
 
 ''' <summary>
-''' Store and manage Customer Objects in memory and load/save them from TEXT FILE.
+''' Store and manage Customer Objects in memory and load/save them
 ''' </summary>
 ''' <remarks>Serialization enabled for this class.</remarks>
 
 <Serializable()> _
 Public Class CustomerList
     Inherits BusinessCollectionBase
+
+    ' Creating a connection object
+    Dim Connection As New OleDbConnection _
+            ("Provider=Microsoft.Jet.OLEDB.4.0;" & "Data Source=Management.mdb")
+    Dim cmd As New OleDbCommand
 
 #Region "Public Properties:"
     Public Shadows ReadOnly Property count As Integer
@@ -324,29 +329,26 @@ Public Class CustomerList
     End Function
 
     Protected Sub DataPortal_Fetch(ByVal Key As String)
-        'Temporary implementation
         Try
-            Dim strLine As String
 
-            If Not File.Exists("CustomerData.txt") Then
+            ' Opening database connection
+            Connection.Open()
 
-                File.Create("CustomerData.txt").Close()
+            ' Database query
+            Dim cmd As New OleDbCommand("SELECT * FROM Customer", Connection)
 
-            End If
+            ' Executing database query and storing in datareader
+            Dim dataReader As OleDbDataReader = cmd.ExecuteReader()
 
-            Dim objDataFile As New StreamReader("CustomerData.txt")
+            ' Reading and passing data to customer collection/objects
+            While (dataReader.Read())
+                Add(dataReader.GetValue(0).ToString, dataReader.GetValue(1).ToString, dataReader.GetValue(2).ToString, _
+                    dataReader.GetValue(3).ToString, CDate(dataReader.GetValue(4)), dataReader.GetValue(5).ToString, _
+                    dataReader.GetValue(6).ToString)
+            End While
 
-            Do While objDataFile.Peek <> -1
-
-                strLine = objDataFile.ReadLine
-
-                Dim tempArray() As String = Split(strLine, ",")
-
-                Add(tempArray(0), tempArray(1), tempArray(2), tempArray(3), _
-                CDate(tempArray(4)), tempArray(5), tempArray(6))
-            Loop
-
-            objDataFile.Close()
+            ' Closing connection
+            Connection.Close()
 
         Catch objE As Exception
 
@@ -398,48 +400,102 @@ Public Class CustomerList
 
             objWrite.Close()
 
-            'Step B-Traps for general exceptions.  
+            ' Traps for general exceptions.  
         Catch objE As Exception
-            'Step C-Throw an general exceptions
+            ' Throw an general exceptions
             Throw New System.Exception("Dataportal Save Error! " & objE.Message)
         End Try
     End Sub
 
 
     Protected Sub DataPortal_Update()
+        Try
+            ' Opening database connection
+            Connection.Open()
+
+            ' Database insert query
+            cmd.CommandText = "UPDATE Customer SET FirstName =" & """Cesar""" & ", SSNumber = " & _
+                ", BirthDate = , Address = , Phone = WHERE IDNumber = 1001;"
+
+            cmd.CommandType = CommandType.Text
+
+            cmd.Connection = Connection
+
+            ' Executing database insert
+            cmd.ExecuteNonQuery()
+
+        Catch objE As Exception
+            ' Throw an general exceptions
+            Throw New System.Exception("Dataportal Update Error! " & objE.Message)
+        End Try
 
     End Sub
 
     Protected Sub DataPortal_Insert()
+        ' Add new customers to the database
 
+        Try
+            ' Opening database connection
+            Connection.Open()
+
+            ' Database insert query
+            cmd.CommandText = "INSERT INTO customer VALUES(" & """1001""" & ", " & """Joe""" & ", " & """Smith""" & ", " & _
+                """111-11-1111""" & "," & "#4/12/1896#" & ", " & """123 Adress""" & ", " & """347-111-1111""" & ");"
+
+            cmd.CommandType = CommandType.Text
+
+            cmd.Connection = Connection
+
+            ' Executing database insert
+            cmd.ExecuteNonQuery()
+
+        Catch objE As Exception
+            ' Throw an general exceptions
+            Throw New System.Exception("Dataportal Insert Error! " & objE.Message)
+        End Try
     End Sub
 
     Protected Sub DataPortal_Delete(ByVal Key As String)
         'Iterates through Collection, Calling Each CHILD object.Delete() method
         'CHILD Objects Delete themselves
 
-        'Step A- Begin Error trapping
+        ' Begin Error trapping
         Try
-            'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
+            ' Create Temporary Person and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
             Dim objItem As Customer
 
-            'Step 2-Use For..Each loop to iterate through Collection
+            ' Use For..Each loop to iterate through Collection
             For Each objDictionaryEntry In MyBase.Dictionary
-                'Step 3-Convert DictionaryEntry pointer returned to Type Person
+                ' Convert DictionaryEntry pointer returned to Type Person
                 objItem = CType(objDictionaryEntry.Value, Customer)
 
-                'Step 4-Find target object based on key
-                'YOU WILL NEED TO SELECT THE CORRECT PROPERTY
+                ' Find target object based on key
                 If objItem.SSNumber = Key Then
 
                     'Step 5-Object deletes itself
                     objItem.ImmediateDelete(Key)
                 End If
             Next
-            'Step B-Traps for general exceptions.  
+
+
+            '' Opening database connection
+            'Connection.Open()
+
+            '' Database insert query
+            'cmd.CommandText = "DELETE FROM customer WHERE SSNumber =" & Key & ";"
+
+            'cmd.CommandType = CommandType.Text
+
+            'cmd.Connection = Connection
+
+            '' Executing database insert
+            'cmd.ExecuteNonQuery()
+            'cmd.Dispose()
+
+            ' Traps for general exceptions.  
         Catch objE As Exception
-            'Step C-Throw an general exceptions
+            ' Throw an general exceptions
             Throw New System.Exception("Dataportal Delete Error! " & objE.Message)
         End Try
     End Sub

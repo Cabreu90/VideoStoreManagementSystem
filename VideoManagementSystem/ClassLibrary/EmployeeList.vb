@@ -16,6 +16,18 @@ Imports System.Collections                              'Collection Library
 Public Class EmployeeList
     Inherits BusinessCollectionBase
 
+    ''' <summary>
+    ''' Database connection -incase
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private Const strConn As String = "Provider=Microsoft.Jet.OleDB.4.0;" & _
+        "Data Source=MANAGEMENT.mdb"
+    ''creating connection object
+    Dim conn As OleDbConnection = New OleDbConnection(strConn)
+    Dim cmd As OleDbCommand
+    Dim _dataAdapter As OleDbDataAdapter
+    Dim _dataSet As DataSet
+
 #Region "Public Properties:"
     Public Shadows ReadOnly Property count As Integer
         Get
@@ -356,28 +368,40 @@ Public Class EmployeeList
     End Function
 
     Protected Sub DataPortal_Fetch(ByVal Key As String)
-        'Temporary implementation
+        '-incase
         Try
-            Dim strLine As String
+            cmd = New OleDbCommand("SELECT * FROM Employee", conn) 'command to retrieve data
+            If (conn.State = ConnectionState.Closed) Then conn.Open() 'Open connection to database if close
+            Dim reader As OleDbDataReader = cmd.ExecuteReader  'Create data reader object
+            While reader.Read = True
+                Add(CStr(reader.Item("SSNumber")), CStr(reader.Item("FirstName")), CStr(reader.Item("LastName")), CDate(reader.Item("BirthDate")), _
+                CStr(reader.Item("Address")), CStr(reader.Item("Phone")), CStr(reader.Item("JobTitle")), CStr(reader.Item("Username")), CStr(reader.Item("Password")))
+            End While
 
-            If Not File.Exists("EmployeeData.txt") Then
+            reader.Close() 'Close the connection
 
-                File.Create("EmployeeData.txt").Close()
-            End If
+            ''Temporary implementation
 
-            Dim objDataFile As New StreamReader("EmployeeData.txt")
+            '    Dim strLine As String
 
-            Do While objDataFile.Peek <> -1
+            '    If Not File.Exists("EmployeeData.txt") Then
 
-                strLine = objDataFile.ReadLine
+            '        File.Create("EmployeeData.txt").Close()
+            '    End If
 
-                Dim tempArray() As String = Split(strLine, ",")
+            '    Dim objDataFile As New StreamReader("EmployeeData.txt")
 
-                Add(tempArray(0), tempArray(1), tempArray(2), CDate(tempArray(3)), _
-                tempArray(4), tempArray(5), tempArray(6), tempArray(7), tempArray(8))
-            Loop
+            '    Do While objDataFile.Peek <> -1
 
-            objDataFile.Close()
+            '        strLine = objDataFile.ReadLine
+
+            '        Dim tempArray() As String = Split(strLine, ",")
+
+            '        Add(tempArray(0), tempArray(1), tempArray(2), CDate(tempArray(3)), _
+            '        tempArray(4), tempArray(5), tempArray(6), tempArray(7), tempArray(8))
+            '    Loop
+
+            '    objDataFile.Close()
 
         Catch objE As Exception
 

@@ -47,6 +47,7 @@ Module MainModule
                     MsgBox("Access Denied.")
                 End If
 
+                blnResults = True
                 objLoginFormObject.GetUserInfoAndDisplayForm(userName, passWord)
             Loop
 

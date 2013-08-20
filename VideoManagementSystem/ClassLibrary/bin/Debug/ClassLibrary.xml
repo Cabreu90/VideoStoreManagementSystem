@@ -1,0 +1,227 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+ClassLibrary
+</name>
+</assembly>
+<members>
+<member name="T:ClassLibrary.VideoGameCategory">
+	<summary>
+ Enumerated Data type that represents the video game category
+ </summary>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.VideoGameFormat">
+	<summary>
+ Enumerated Data type that represents the video game format or type of Game Consoles the game is intended for.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.VideoGame">
+	<summary>
+ Represents a Video Game.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="T:ClassLibrary.Employee">
+	<summary>
+ Represent epmloyees of the company.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="P:ClassLibrary.Person.SSNumber">
+	<summary>
+ Sets and gets a Social Security Number.
+ </summary>
+	<value>SSNumber</value>
+	<returns>SSNumber</returns>
+	<remarks></remarks>
+</member><member name="P:ClassLibrary.Person.FirstName">
+	<summary>
+ Sets and gets the person's first name.
+ </summary>
+	<value>First Name</value>
+	<returns>First Name</returns>
+	<remarks></remarks>
+</member><member name="P:ClassLibrary.Person.LastName">
+	<summary>
+ Sets and gets the Last Name.
+ </summary>
+	<value>Last Name</value>
+	<returns>Last Name</returns>
+	<remarks></remarks>
+</member><member name="P:ClassLibrary.Person.Address">
+	<summary>
+ Sets and gets the person's full address.
+ </summary>
+	<value>Full Address</value>
+	<returns>Full Address</returns>
+	<remarks></remarks>
+</member><member name="P:ClassLibrary.Person.Phone">
+	<summary>
+ Sets and gets the person phone number.
+ </summary>
+	<value>Phone Number</value>
+	<returns>Phone Number</returns>
+	<remarks></remarks>
+</member><member name="P:ClassLibrary.Person.BirthDate">
+	<summary>
+ Sets and gets Birthdate private data.
+ </summary>
+	<value>The person's birthdate</value>
+	<returns> The person's Birthdate</returns>
+	<remarks>Declared overridable so that derived class can override it.</remarks>
+</member><member name="P:ClassLibrary.Person.Age">
+	<summary>
+ Gets the Age only.
+ </summary>
+	<value> N/A</value>
+	<returns>Age</returns>
+	<remarks></remarks>
+</member><member name="P:ClassLibrary.Person.Count">
+	<summary>
+ Object counter.
+ </summary>
+	<value>Number of onjects</value>
+	<returns>Number of objects</returns>
+	<remarks></remarks>
+</member><member name="M:ClassLibrary.Person.ResetCount">
+	<summary>
+ Start counting from zero again.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:ClassLibrary.Person.IncrementCount(System.Int32)">
+	<summary>
+ The new value to it's added to the counter.
+ </summary>
+	<param name="c">New value to be added.</param>
+	<remarks></remarks>
+</member><member name="M:ClassLibrary.Person.Print">
+	<summary>
+ Print info.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:ClassLibrary.Person.Authenticate(System.String,System.String)">
+	<summary>
+ Authenticates user.
+ </summary>
+	<param name="user">Username</param>
+	<param name="pass">Password</param>
+	<returns>True/False</returns>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.Person">
+	<summary>
+ Represents a person. Designed to be inherited. It can't be instantiated.
+ </summary>
+	<remarks>
+ Serialization enabled for this class.
+ </remarks>
+</member><member name="P:ClassLibrary.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:ClassLibrary.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:ClassLibrary.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="F:ClassLibrary.EmployeeList.strConn">
+	<summary>
+ Database connection -incase
+ </summary>
+	<remarks></remarks>
+</member><member name="M:ClassLibrary.EmployeeList.DataPortal_Save">
+	<summary>
+ SAVES all objects from database by Iterating through Collection, and 
+ calling Each ITEM object SAVE() method so each Item saves itself
+ </summary>
+</member><member name="T:ClassLibrary.EmployeeList">
+	<summary>
+ Store and manage Employee Objects in memory and load/save them from TEXT FILE.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="M:ClassLibrary.BusinessCollectionBase.DeferredDelete(System.String)">
+	<summary>
+ MustOverride Function DeferredDelete(Key) 
+ Purpose - Forced upon any class that inherits from this BusinessCollectionBase
+ Derived classes MUST OVERRIDE and implement this method
+ otherwise they cannot compile.  
+ </summary>
+</member><member name="M:ClassLibrary.CustomerList.DataPortal_Save">
+	<summary>
+ SAVES all objects from database by Iterating through Collection, and 
+ calling Each ITEM object SAVE() method so each Item saves itself
+ </summary>
+</member><member name="T:ClassLibrary.CustomerList">
+	<summary>
+ Store and manage Customer Objects in memory and load/save them from TEXT FILE.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="T:ClassLibrary.Rating">
+	<summary>
+ This is an enumerated Data type declaration that represents product’s rating.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.Product">
+	<summary>
+ Represents a Product. Designed to be inherited. It can't be instantiated.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="M:ClassLibrary.VideoGameList.DataPortal_Save">
+	<summary>
+ SAVES all objects from database by Iterating through Collection, and 
+ calling Each ITEM object SAVE() method so each Item saves itself
+ </summary>
+</member><member name="T:ClassLibrary.VideoGameList">
+	<summary>
+ Store and manage Video Game Objects in memory and load/save them from TEXT FILE.
+ </summary>
+	<remarks></remarks>
+</member><member name="M:ClassLibrary.Customer.Authenticate(System.String,System.String)">
+	<summary>
+ Stub method for future update.
+ </summary>
+	<param name="user"></param>
+	<param name="pass"></param>
+	<returns></returns>
+	<remarks>Customers do not need to authenticate.</remarks>
+</member><member name="M:ClassLibrary.Customer.Create">
+	<summary>
+ Creates new employee object using factory method.
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.Customer">
+	<summary>
+  Represents the customer.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="T:ClassLibrary.MovieCategory">
+	<summary>
+ Enumerated Data type that represents the movie category.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.DVDFormat">
+	<summary>
+ Enumerated Data type that represents the DVD movie format.
+ </summary>
+	<remarks></remarks>
+</member><member name="T:ClassLibrary.DVD">
+	<summary>
+ Represents a DVD.
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member><member name="M:ClassLibrary.DVDList.DataPortal_Save">
+	<summary>
+ SAVES all objects from database by Iterating through Collection, and 
+ calling Each ITEM object SAVE() method so each Item saves itself
+ </summary>
+</member><member name="T:ClassLibrary.DVDList">
+	<summary>
+ Store and manage DVD Objects in memory and load/save them from TEXT FILE. 
+ </summary>
+	<remarks>Serialization enabled for this class.</remarks>
+</member>
+</members>
+</doc>
