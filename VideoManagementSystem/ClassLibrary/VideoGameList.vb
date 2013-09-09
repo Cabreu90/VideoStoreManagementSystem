@@ -15,6 +15,17 @@ Imports System.Configuration                            'Configuration File for 
 Public Class VideoGameList
     Inherits BusinessCollectionBase
 
+#Region "Database Connection"
+    ' Creating a connection potinter
+    Private Connection As OleDbConnection
+
+    ' Connection string with database location
+    Private Const connStr As String = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = Management.accdb"
+
+    ' Database command
+    Private cmd As New OleDbCommand
+#End Region
+
 #Region "Public Properties:"
     Public Shadows ReadOnly Property count As Integer
         Get
@@ -270,15 +281,17 @@ Public Class VideoGameList
         Return DataPortal_Create()
     End Function
 
-    Public Sub Load(ByVal Key As String)
+    Public Sub Load()
 
-        DataPortal_Fetch(Key)
+        DataPortal_Fetch()
     End Sub
 
     Public Sub Save()
+
         If IsDirty Then
             DataPortal_Save()
         End If
+
     End Sub
 
     Public Sub ImmediateDelete(ByVal Key As String)
@@ -331,35 +344,70 @@ Public Class VideoGameList
         Return Nothing
     End Function
 
-    Protected Sub DataPortal_Fetch(ByVal Key As String)
-        'Temporary implementation
+    Protected Sub DataPortal_Fetch()
+
+        ' Start trapping errors 
         Try
-            Dim strLine As String
+            Connection = New OleDbConnection(connStr)
 
-            If Not File.Exists("VideoGameData.txt") Then
+            ' Open database connection 
+            Connection.Open()
 
-                File.Create("VideoGameData.txt").Close()
+            ' Create SQL string to get all Primary Keys of VideoGames 
+            Dim strSQL As String = "SELECT IDNumber FROM VideoGame"
+
+            ' Create Command object 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Create DATAREADER object & Execute Query 
+            Dim objDR As OleDbDataReader = objCmd.ExecuteReader
+
+            ' Test to make sure there is data in the DataReader Object 
+            If objDR.HasRows Then
+
+                ' Iterate through DataReader one record at a time. 
+                Do While objDR.Read
+
+                    ' Create VideoGame Object 
+                    Dim objItem As New VideoGame
+
+                    ' Get Key from DataReader record 
+                    Dim strKey As String = objDR.GetValue(0).ToString
+
+                    ' ITEM will load itself based on key. 
+                    objItem.Load(strKey)
+
+                    ' Add object to collection 
+                    Me.Add(objItem.IDNumber, objItem)
+
+                    ' Terminate new object 
+                    objItem = Nothing
+                Loop
+            Else
+
+                ' No data returned, Record not found. 
+                Throw New System.ApplicationException("Load Error! Record Not Found")
             End If
 
-            Dim objDataFile As New StreamReader("VideoGameData.txt")
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+            objDR.Close()
+            objDR = Nothing
 
-            Do While objDataFile.Peek <> -1
+            ' Trap all Business Object, OleDB & general Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Load Error: " & objEx.Message)
+        Finally
 
-                strLine = objDataFile.ReadLine
-
-                Dim tempArray() As String = Split(strLine, ",")
-
-                Add(tempArray(0), tempArray(1), tempArray(2), CType(System.Enum.Parse(GetType(Rating), tempArray(3)), Rating), _
-                CDec(tempArray(4)), CDec(tempArray(5)), CDec(tempArray(6)), CType(System.Enum.Parse(GetType(VideoGameCategory), _
-                tempArray(7)), VideoGameCategory), CType(System.Enum.Parse(GetType(VideoGameFormat), tempArray(8)), VideoGameFormat))
-            Loop
-
-            objDataFile.Close()
-
-
-        Catch objE As Exception
-
-            Throw New System.Exception("Fetch Error: " & objE.Message)
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
         End Try
     End Sub
 
@@ -368,51 +416,30 @@ Public Class VideoGameList
     ''' calling Each ITEM object SAVE() method so each Item saves itself
     ''' </summary>
     Protected Sub DataPortal_Save()
-        'Iterates through Collection, Calling Each CHILD object.Save() method
-        'CHILD Objects save themselves
-        'Step A- Begin Error trapping
+        ' Iterates through Collection, Calling Each CHILD object.Save() method
+        ' CHILD Objects save themselves
+
+        ' Begin Error trapping
         Try
-            '    'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
-            '    Dim objDictionaryEntry As DictionaryEntry
-            '    Dim objChild As VideoGame
-
-            '    'Step 2-Use For..Each loop to iterate through Collection
-            '    For Each objDictionaryEntry In MyBase.Dictionary
-            '        'Step 3-Convert DictionaryEntry pointer returned to Type Person
-            '        objChild = CType(objDictionaryEntry.Value, VideoGame)
-
-            '        'Step 4-Call Child to Save itself
-            '        objChild.Save()
-
-            '    Next
-
-
-            Dim objWrite As New StreamWriter("VideoGameData.txt")
-
+            ' Create Temporary VideoGames and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
-            Dim objVideoGame As VideoGame
+            Dim objChild As VideoGame
 
+            ' Use For..Each loop to iterate through Collection
             For Each objDictionaryEntry In MyBase.Dictionary
 
-                objVideoGame = CType(objDictionaryEntry.Value, VideoGame)
+                ' Convert DictionaryEntry pointer returned to Type Person
+                objChild = CType(objDictionaryEntry.Value, VideoGame)
 
-                objWrite.WriteLine(objVideoGame.IDNumber & "," & _
-                objVideoGame.Title & "," & _
-                objVideoGame.Description & "," & _
-                objVideoGame.Rating.ToString & "," & _
-                objVideoGame.SalePrice.ToString & "," & _
-                objVideoGame.RentalRate.ToString & "," & _
-                objVideoGame.LateFee.ToString & "," & _
-                objVideoGame.Category.ToString & "," & _
-                objVideoGame.Format.ToString)
+                ' Call Child to Save itself
+                objChild.Save()
+
             Next
 
-            objWrite.Close()
 
-
-            'Step B-Traps for general exceptions.  
+            ' Traps for general exceptions. 
         Catch objE As Exception
-            'Step C-Throw an general exceptions
+            ' Throw an general exceptions
             Throw New System.Exception("Dataportal Save Error! " & objE.Message)
         End Try
     End Sub
@@ -430,19 +457,18 @@ Public Class VideoGameList
         'Iterates through Collection, Calling Each CHILD object.Delete() method
         'CHILD Objects Delete themselves
 
-        'Step A- Begin Error trapping
+        ' Begin Error trapping
         Try
-            'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
+            ' Create Temporary Person and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
             Dim objItem As VideoGame
 
-            'Step 2-Use For..Each loop to iterate through Collection
+            ' Use For..Each loop to iterate through Collection
             For Each objDictionaryEntry In MyBase.Dictionary
-                'Step 3-Convert DictionaryEntry pointer returned to Type Person
+                ' Convert DictionaryEntry pointer returned to Type Person
                 objItem = CType(objDictionaryEntry.Value, VideoGame)
 
-                'Step 4-Find target object based on key
-                'YOU WILL NEED TO SELECT THE CORRECT PROPERTY
+                ' Find target object based on the key
                 If objItem.IDNumber = Key Then
 
                     'Step 5-Object deletes itself
@@ -451,12 +477,11 @@ Public Class VideoGameList
                 End If
 
             Next
-            'Step B-Traps for general exceptions.  
+            ' Traps for general exceptions.  
         Catch objE As Exception
-            'Step C-Throw an general exceptions
+            ' Throw an general exceptions
             Throw New System.Exception("Dataportal Delete Error! " & objE.Message)
         End Try
-
 
     End Sub
 

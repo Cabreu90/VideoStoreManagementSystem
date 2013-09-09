@@ -16,10 +16,16 @@ Imports System.Collections                              'Collection Library
 Public Class CustomerList
     Inherits BusinessCollectionBase
 
-    ' Creating a connection object
-    Dim Connection As New OleDbConnection _
-            ("Provider=Microsoft.Jet.OLEDB.4.0;" & "Data Source=Management.mdb")
-    Dim cmd As New OleDbCommand
+#Region "Database Connection"
+    ' Creating a connection potinter
+    Private Connection As OleDbConnection
+
+    ' Connection string with database location
+    Private Const connStr As String = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = Management.accdb"
+
+    ' Database command
+    Private cmd As New OleDbCommand
+#End Region
 
 #Region "Public Properties:"
     Public Shadows ReadOnly Property count As Integer
@@ -267,15 +273,14 @@ Public Class CustomerList
         Return DataPortal_Create()
     End Function
 
-    Public Sub Load(ByVal Key As String)
+    Public Sub Load()
 
-        DataPortal_Fetch(Key)
+        DataPortal_Fetch()
     End Sub
 
     Public Sub Save()
-        If IsDirty Then
-            DataPortal_Save()
-        End If
+
+        DataPortal_Save()
     End Sub
 
     Public Sub ImmediateDelete(ByVal Key As String)
@@ -298,7 +303,7 @@ Public Class CustomerList
             For Each objDEntry In MyBase.Dictionary
                 objItem = CType(objDEntry.Value, Customer)
                 'Find object
-                If objItem.SSNumber = Key Then
+                If objItem.IDNumber = Key Then
                     'If NOT New 
                     If Not objItem.IsNew Then
                         'Mark Object for Deletion
@@ -328,31 +333,70 @@ Public Class CustomerList
         Return Nothing
     End Function
 
-    Protected Sub DataPortal_Fetch(ByVal Key As String)
-        Try
+    Protected Sub DataPortal_Fetch()
 
-            ' Opening database connection
+        ' Start trapping errors 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open database connection 
             Connection.Open()
 
-            ' Database query
-            Dim cmd As New OleDbCommand("SELECT * FROM Customer", Connection)
+            ' Create SQL string to get all Primary Keys of Customers 
+            Dim strSQL As String = "SELECT IDNumber FROM Customer"
 
-            ' Executing database query and storing in datareader
-            Dim dataReader As OleDbDataReader = cmd.ExecuteReader()
+            ' Create Command object 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
 
-            ' Reading and passing data to customer collection/objects
-            While (dataReader.Read())
-                Add(dataReader.GetValue(0).ToString, dataReader.GetValue(1).ToString, dataReader.GetValue(2).ToString, _
-                    dataReader.GetValue(3).ToString, CDate(dataReader.GetValue(4)), dataReader.GetValue(5).ToString, _
-                    dataReader.GetValue(6).ToString)
-            End While
+            ' Create DATAREADER object & Execute Query 
+            Dim objDR As OleDbDataReader = objCmd.ExecuteReader
 
-            ' Closing connection
+            ' Test to make sure there is data in the DataReader Object 
+            If objDR.HasRows Then
+
+                ' Iterate through DataReader one record at a time. 
+                Do While objDR.Read
+
+                    ' Create Customer Object 
+                    Dim objItem As New Customer
+
+                    ' Get Key from DataReader record 
+                    Dim strKey As String = objDR.GetValue(0).ToString
+
+                    ' ITEM will load itself based on key. 
+                    objItem.Load(strKey)
+
+                    ' Add object to collection 
+                    Me.Add(objItem.IDNumber, objItem)
+
+                    ' Terminate new object 
+                    objItem = Nothing
+                Loop
+            Else
+
+                ' No data returned, Record not found. 
+                Throw New System.ApplicationException("Load Error! Record Not Found")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+            objDR.Close()
+            objDR = Nothing
+
+            ' Trap all Business Object, OleDB & general Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Load Error: " & objEx.Message)
+        Finally
+
+            ' Terminate connection 
             Connection.Close()
-
-        Catch objE As Exception
-
-            Throw New System.Exception("Fetch Error: " & objE.Message)
+            Connection.Dispose()
+            Connection = Nothing
         End Try
     End Sub
 
@@ -363,101 +407,35 @@ Public Class CustomerList
     Protected Sub DataPortal_Save()
         'Iterates through Collection, Calling Each CHILD object.Save() method
         'CHILD Objects save themselves
-        'Step A- Begin Error trapping
+
+        ' Begin trapping errors
         Try
-            '    'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
-            '    Dim objDictionaryEntry As DictionaryEntry
-            '    Dim objChild As Customer
-
-            '    'Step 2-Use For..Each loop to iterate through Collection
-            '    For Each objDictionaryEntry In MyBase.Dictionary
-            '        'Step 3-Convert DictionaryEntry pointer returned to Type Person
-            '        objChild = CType(objDictionaryEntry.Value, Customer)
-
-            '        'Step 4-Call Child to Save itself
-            '        objChild.Save()
-
-            '    Next
-
-
-            Dim objWrite As New StreamWriter("CustomerData.txt")
-
+            ' Create Temporary Person and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
-            Dim objCustomer As Customer
+            Dim objChild As Customer
 
+            ' Use For..Each loop to iterate through Collection 
             For Each objDictionaryEntry In MyBase.Dictionary
 
-                objCustomer = CType(objDictionaryEntry.Value, Customer)
+                ' Convert DictionaryEntry pointer returned to Type Person 
+                objChild = CType(objDictionaryEntry.Value, Customer)
 
-                objWrite.WriteLine(objCustomer.IDNumber & "," & _
-                                   objCustomer.FirstName & "," & _
-                                   objCustomer.LastName & "," & _
-                                   objCustomer.SSNumber & "," & _
-                                   objCustomer.BirthDate & "," & _
-                                   objCustomer.Address & "," & _
-                                   objCustomer.Phone)
+                ' Call Child to Save itself 
+                objChild.Save()
             Next
 
-            objWrite.Close()
-
-            ' Traps for general exceptions.  
+            ' Trap general exceptions.
         Catch objE As Exception
             ' Throw an general exceptions
-            Throw New System.Exception("Dataportal Save Error! " & objE.Message)
+            Throw New System.Exception("Save Error! " & objE.Message)
         End Try
     End Sub
 
-
-    Protected Sub DataPortal_Update()
-        Try
-            ' Opening database connection
-            Connection.Open()
-
-            ' Database insert query
-            cmd.CommandText = "UPDATE Customer SET FirstName =" & """Cesar""" & ", SSNumber = " & _
-                ", BirthDate = , Address = , Phone = WHERE IDNumber = 1001;"
-
-            cmd.CommandType = CommandType.Text
-
-            cmd.Connection = Connection
-
-            ' Executing database insert
-            cmd.ExecuteNonQuery()
-
-        Catch objE As Exception
-            ' Throw an general exceptions
-            Throw New System.Exception("Dataportal Update Error! " & objE.Message)
-        End Try
-
-    End Sub
-
-    Protected Sub DataPortal_Insert()
-        ' Add new customers to the database
-
-        Try
-            ' Opening database connection
-            Connection.Open()
-
-            ' Database insert query
-            cmd.CommandText = "INSERT INTO customer VALUES(" & """1001""" & ", " & """Joe""" & ", " & """Smith""" & ", " & _
-                """111-11-1111""" & "," & "#4/12/1896#" & ", " & """123 Adress""" & ", " & """347-111-1111""" & ");"
-
-            cmd.CommandType = CommandType.Text
-
-            cmd.Connection = Connection
-
-            ' Executing database insert
-            cmd.ExecuteNonQuery()
-
-        Catch objE As Exception
-            ' Throw an general exceptions
-            Throw New System.Exception("Dataportal Insert Error! " & objE.Message)
-        End Try
-    End Sub
 
     Protected Sub DataPortal_Delete(ByVal Key As String)
         'Iterates through Collection, Calling Each CHILD object.Delete() method
         'CHILD Objects Delete themselves
+
 
         ' Begin Error trapping
         Try
@@ -469,29 +447,14 @@ Public Class CustomerList
             For Each objDictionaryEntry In MyBase.Dictionary
                 ' Convert DictionaryEntry pointer returned to Type Person
                 objItem = CType(objDictionaryEntry.Value, Customer)
-
                 ' Find target object based on key
-                If objItem.SSNumber = Key Then
+                If objItem.IDNumber = Key Then
 
                     'Step 5-Object deletes itself
                     objItem.ImmediateDelete(Key)
                 End If
             Next
 
-
-            '' Opening database connection
-            'Connection.Open()
-
-            '' Database insert query
-            'cmd.CommandText = "DELETE FROM customer WHERE SSNumber =" & Key & ";"
-
-            'cmd.CommandType = CommandType.Text
-
-            'cmd.Connection = Connection
-
-            '' Executing database insert
-            'cmd.ExecuteNonQuery()
-            'cmd.Dispose()
 
             ' Traps for general exceptions.  
         Catch objE As Exception

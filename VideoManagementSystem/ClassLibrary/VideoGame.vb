@@ -58,6 +58,17 @@ Public Class VideoGame
     Dim m_enumVideoGameCategory As VideoGameCategory    'Enumerated Data type that represents the video game category.
     Dim m_enumVideoGameFormat As VideoGameFormat        'Enumerated Data type that represents the video game format or type of Game Console
 
+#Region "Database Connection"
+    ' Creating a connection potinter
+    Private Connection As OleDbConnection
+
+    ' Connection string with database location
+    Private Const connStr As String = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = Management.accdb"
+
+    ' Database command
+    Private cmd As New OleDbCommand
+#End Region
+
 #Region "Public Properties"
     Public Property Category As VideoGameCategory
         Get
@@ -182,18 +193,230 @@ Public Class VideoGame
     End Function
 
     Protected Sub DataPortal_Fetch(ByVal Key As String)
+
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create SQL string 
+            Dim strSQL As String = "SELECT * FROM VideoGame WHERE IDNumber = ?"
+
+            ' Create Command object, pass query/connection & Add paramters 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+            objCmd.Parameters.Add("@IDNumber", OleDbType.Numeric).Value = Key
+
+            ' Create DATAREADER object & Execute Query 
+            Dim objDR As OleDbDataReader = objCmd.ExecuteReader
+
+            ' Check to make sure there is data in the DataReader Object 
+            If objDR.HasRows Then
+
+                ' Call Read() Method to point and read the first record 
+                objDR.Read()
+
+                ' Extract data from a row and populate object. 
+                Me.IDNumber = CStr(objDR.Item(0))
+                Me.Title = CStr(objDR.Item(1))
+                Me.Description = CStr(objDR.Item(2))
+                Me.Rating = CType(System.Enum.Parse(GetType(Rating), CStr(objDR.Item(3))), Rating)
+                Me.Available = CBool(objDR.Item(4))
+                Me.SalePrice = CDec(objDR.Item(5))
+                Me.RentalRate = CDec(objDR.Item(6))
+                Me.LateFee = CDec(objDR.Item(7))
+                Me.Category = CType(System.Enum.Parse(GetType(VideoGameCategory), CStr(objDR.Item(8))), VideoGameCategory)
+                Me.Format = CType(System.Enum.Parse(GetType(VideoGameFormat), CStr(objDR.Item(9))), VideoGameFormat)
+            Else
+
+                ' If no data is returned, throw error 
+                Throw New System.ApplicationException("Load Error! VideoGame Not Found")
+            End If
+
+            ' Terminate ADO Objects 
+            objDR.Close()
+            objDR = Nothing
+            objCmd.Dispose()
+
+            ' Trap for General Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Load Error: " & objEx.Message)
+        Finally
+
+            ' Terminate connection
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        'At the end, set New flag to False. NOT Dirty since found in database
         MyBase.MarkOld()
     End Sub
 
     Protected Sub DataPortal_Update()
+
+        ' Start Error Trapping 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create Query, Command Object & initialize 
+            Dim strSQL As String = "UPDATE VideoGame SET Title = ?, Description = ?, Rating = ?," _
+                                   & "Available = ?, SalePrice = ?, RentalRate = ?, LateFee = ?," _
+                                   & "VideoGameCategory = ?, VideoGameFormat = ? WHERE IDNumber= ?"
+
+            ' Create Command object, pass string and connection object as arguments 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Add Parameter to Collection & Set Value 
+            objCmd.Parameters.Add("@Title", OleDbType.VarChar).Value = Me.Title
+            objCmd.Parameters.Add("@Description", OleDbType.VarChar).Value = Me.Description
+            objCmd.Parameters.Add("@Rating", OleDbType.VarChar).Value = Me.Rating
+            objCmd.Parameters.Add("@Available", OleDbType.Boolean).Value = Me.Available
+            objCmd.Parameters.Add("@SalePrice", OleDbType.Decimal).Value = Me.SalePrice
+            objCmd.Parameters.Add("@RentalRate", OleDbType.Decimal).Value = Me.RentalRate
+            objCmd.Parameters.Add("@LateFee", OleDbType.Decimal).Value = Me.LateFee
+            objCmd.Parameters.Add("@VideoGameCategory", OleDbType.VarChar).Value = Me.Category
+            objCmd.Parameters.Add("@VideoGameFormat", OleDbType.VarChar).Value = Me.Format
+            objCmd.Parameters.Add("@IDNumber", OleDbType.Char).Value = Me.IDNumber
+
+            ' Execute Non-Row Quer
+            Dim intRecordsAffected As Integer = objCmd.ExecuteNonQuery()
+
+            ' Test result and throw exception if it fails 
+            If intRecordsAffected <> 1 Then
+                Throw New System.ApplicationException("UPDATE Query Failed")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+
+            ' Trap for App General Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Update Error: " & objEx.Message)
+        Finally
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        ' Set New flag to False since exist in database/and is Not dirty any longer
         MyBase.MarkOld()
     End Sub
 
     Protected Sub DataPortal_Insert()
+
+        ' Start Error Trapping 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create Command/Query 
+            Dim strSQL As String = "INSERT INTO VideoGame VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+            ' Create Command object, pass connection info as arguments 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Add Paramter to Pareameters Collection 
+            objCmd.Parameters.Add("@IDNumber", OleDbType.Char).Value = Me.IDNumber
+            objCmd.Parameters.Add("@Title", OleDbType.VarChar).Value = Me.Title
+            objCmd.Parameters.Add("@Description", OleDbType.VarChar).Value = Me.Description
+            objCmd.Parameters.Add("@Rating", OleDbType.VarChar).Value = Me.Rating
+            objCmd.Parameters.Add("@Available", OleDbType.Boolean).Value = Me.Available
+            objCmd.Parameters.Add("@SalePrice", OleDbType.Decimal).Value = Me.SalePrice
+            objCmd.Parameters.Add("@RentalRate", OleDbType.Decimal).Value = Me.RentalRate
+            objCmd.Parameters.Add("@LateFee", OleDbType.Decimal).Value = Me.LateFee
+            objCmd.Parameters.Add("@VideoGameCategory", OleDbType.VarChar).Value = Me.Category
+            objCmd.Parameters.Add("@VideoGameFormat", OleDbType.VarChar).Value = Me.Format
+
+            ' Execute Non-Row Query 
+            Dim intRecordsAffected As Integer = objCmd.ExecuteNonQuery()
+
+            ' Test result and throw exception if failed
+            If intRecordsAffected <> 1 Then
+                Throw New System.ApplicationException("INSERT Query Failed")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+
+            ' Trap for App General Exceptions 
+        Catch objBO As NotSupportedException
+            Throw New System.NotSupportedException(objBO.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Insert Error: " & objEx.Message)
+        Finally
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        ' Set New flag to False since exist in database/and is Not new any longer
         MyBase.MarkOld()
     End Sub
 
     Protected Sub DataPortal_Delete(ByVal Key As String)
+        'Start Error Trapping 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create SQL command string
+            Dim strSQL As String = "DELETE FROM VideoGame WHERE IDNumber = ?"
+
+            ' Create Command object, pass string and connection object as arguments 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Add Parameter to Collection & Set Value 
+            objCmd.Parameters.Add("@IDNumber", OleDbType.Char).Value = Key
+
+            ' Execute Non-Row Query 
+            Dim intRecordsAffected As Integer = objCmd.ExecuteNonQuery()
+
+            ' Test result and throw exception if it fails
+            If intRecordsAffected <> 1 Then
+                Throw New System.ApplicationException("DELETE Query Failed")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+
+            ' Trap for App General Exceptions 
+        Catch objBO As NotSupportedException
+            Throw New System.NotSupportedException("Delete Error: " & objBO.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException("Delete Error: " & objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Delete Error: " & objEx.Message)
+        Finally
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        'Object no longer in database, therefore reset our status to be a new object
         MyBase.MarkNew()
     End Sub
 

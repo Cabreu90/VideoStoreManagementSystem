@@ -11,16 +11,22 @@ Public Class dvdForm
     End Sub
 
     Private Sub dvdForm_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
-        objDVDList.Save()
-        dgDVDList.DataSource = Nothing
-        objDVDList.Clear()
-        dvdobj = Nothing
+        Try
+            objDVDList.Save()
+            dgDVDList.DataSource = Nothing
+            objDVDList.Clear()
+            dvdobj = Nothing
+
+        Catch objE As Exception
+
+            MessageBox.Show(objE.Message)
+        End Try
     End Sub
 
     Private Sub dvdForm_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
 
-
+            objDVDList = New DVDList
             objDVDList.Load("")
 
         Catch objE As Exception
@@ -241,7 +247,7 @@ Public Class dvdForm
         Try
             Dim bolResults As Boolean
 
-            objDVDList.DeferredDelete(idNumberTextBox.Text.Trim)
+            objDVDList.ImmediateDelete(idNumberTextBox.Text.Trim)
             bolResults = objDVDList.Remove(idNumberTextBox.Text.Trim)
 
             If bolResults <> True Then

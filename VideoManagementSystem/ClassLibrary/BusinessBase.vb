@@ -89,6 +89,7 @@ Public MustInherit Class BusinessBase
     '*********************************************************************
     'Support for Deferred Deletion. Marks the object for deleting later not immediately
     Public Sub DeferredDelete()
+
         'Call MarkDeleted() method to Mark the Object for Deferred Delete
         MarkDeleted()
     End Sub

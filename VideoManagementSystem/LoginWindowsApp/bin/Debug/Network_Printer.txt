@@ -1,12 +1,12 @@
 Printing Customer ............
 IDNumber= 222
 Name = Angel
-Last Name = Rodriguez
+Last Name = Rodrigez
 Social Security Number = 222-22-2222
 Birthday = 11/20/1985
 Adress = 124 174st
-Age = 27
-Phone Number = 348-222-2222
+Age = 28
+Phone Number = 347-222-2222
 
 Printing Customer ............
 IDNumber= 444
@@ -15,7 +15,7 @@ Last Name = Johnson
 Social Security Number = 444-44-4444
 Birthday = 3/18/1984
 Adress = 100 Canal st
-Age = 28
+Age = 29
 Phone Number = 347-444-4444
 
 Printing Customer ............
@@ -25,48 +25,8 @@ Last Name = Rivera
 Social Security Number = 555-55-5555
 Birthday = 5/7/1986
 Adress = 345 3rd st
-Age = 26
-Phone Number = 347-555-5555
-
-Printing Customer ............
-IDNumber= 111
-Name = Joe
-Last Name = Smith
-Social Security Number = 111-11-1111
-Birthday = 4/12/1896
-Adress = 123 Adress
-Age = 116
-Phone Number = 347-111-1111
-
-Printing Customer ............
-IDNumber= 333
-Name = Sam
-Last Name = Peterson
-Social Security Number = 333-33-3333
-Birthday = 1/13/1984
-Adress = 234 162st
-Age = 28
-Phone Number = 347-333-3333
-
-Printing Customer ............
-IDNumber= 222
-Name = Angel
-Last Name = Rodriguez
-Social Security Number = 222-22-2222
-Birthday = 11/20/1985
-Adress = 124 174st
 Age = 27
-Phone Number = 348-222-2222
-
-Printing Customer ............
-IDNumber= 444
-Name = Mary
-Last Name = Johnson
-Social Security Number = 444-44-4444
-Birthday = 3/18/1984
-Adress = 100 Canal st
-Age = 28
-Phone Number = 347-444-4444
+Phone Number = 347-555-5555
 
 Printing Customer ............
 IDNumber= 111
@@ -75,18 +35,8 @@ Last Name = Smith
 Social Security Number = 111-11-1111
 Birthday = 4/12/1896
 Adress = 123 Adress
-Age = 116
+Age = 117
 Phone Number = 347-111-1111
-
-Printing Customer ............
-IDNumber= 555
-Name = Nancy
-Last Name = Rivera
-Social Security Number = 555-55-5555
-Birthday = 5/7/1986
-Adress = 345 3rd st
-Age = 26
-Phone Number = 347-555-5555
 
 Printing Customer ............
 IDNumber= 333
@@ -95,6 +45,6 @@ Last Name = Peterson
 Social Security Number = 333-33-3333
 Birthday = 1/13/1984
 Adress = 234 162st
-Age = 28
+Age = 29
 Phone Number = 347-333-3333
 

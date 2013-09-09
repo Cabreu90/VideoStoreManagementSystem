@@ -16,17 +16,21 @@ Imports System.Collections                              'Collection Library
 Public Class EmployeeList
     Inherits BusinessCollectionBase
 
-    ''' <summary>
-    ''' Database connection -incase
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Const strConn As String = "Provider=Microsoft.Jet.OleDB.4.0;" & _
-        "Data Source=MANAGEMENT.mdb"
-    ''creating connection object
-    Dim conn As OleDbConnection = New OleDbConnection(strConn)
-    Dim cmd As OleDbCommand
-    Dim _dataAdapter As OleDbDataAdapter
-    Dim _dataSet As DataSet
+#Region "Dabase Connection"
+    ' Creating a connection potinter
+    Private Connection As OleDbConnection
+
+    ' Connection string with dabase location
+    Private Const connStr As String = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = Management.accdb"
+
+    ' Dabase command
+    Private cmd As New OleDbCommand
+
+    Private _dataAdapter As OleDbDataAdapter
+    Private _dataSet As DataSet
+#End Region
+
+
 
 #Region "Public Properties:"
     Public Shadows ReadOnly Property count As Integer
@@ -268,7 +272,7 @@ Public Class EmployeeList
             Dim objDictionaryEntry As DictionaryEntry
             Dim objEmployee As Employee
 
-            Load("")
+            Load()
 
             For Each objDictionaryEntry In MyBase.Dictionary
 
@@ -297,8 +301,8 @@ Public Class EmployeeList
         Return DataPortal_Create()
     End Function
 
-    Public Sub Load(ByVal Key As String)
-        DataPortal_Fetch(Key)
+    Public Sub Load()
+        DataPortal_Fetch()
     End Sub
 
     Public Sub Save()
@@ -367,45 +371,70 @@ Public Class EmployeeList
         Return Nothing
     End Function
 
-    Protected Sub DataPortal_Fetch(ByVal Key As String)
-        '-incase
+    Protected Sub DataPortal_Fetch()
+
+        ' Start trapping errors 
         Try
-            cmd = New OleDbCommand("SELECT * FROM Employee", conn) 'command to retrieve data
-            If (conn.State = ConnectionState.Closed) Then conn.Open() 'Open connection to database if close
-            Dim reader As OleDbDataReader = cmd.ExecuteReader  'Create data reader object
-            While reader.Read = True
-                Add(CStr(reader.Item("SSNumber")), CStr(reader.Item("FirstName")), CStr(reader.Item("LastName")), CDate(reader.Item("BirthDate")), _
-                CStr(reader.Item("Address")), CStr(reader.Item("Phone")), CStr(reader.Item("JobTitle")), CStr(reader.Item("Username")), CStr(reader.Item("Password")))
-            End While
+            Connection = New OleDbConnection(connStr)
 
-            reader.Close() 'Close the connection
+            ' Open database connection 
+            Connection.Open()
 
-            ''Temporary implementation
+            ' Create SQL string to get all Primary Keys of Employees 
+            Dim strSQL As String = "SELECT SSNumber FROM Employee"
 
-            '    Dim strLine As String
+            ' Create Command object 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
 
-            '    If Not File.Exists("EmployeeData.txt") Then
+            ' Create DATAREADER object & Execute Query 
+            Dim objDR As OleDbDataReader = objCmd.ExecuteReader
 
-            '        File.Create("EmployeeData.txt").Close()
-            '    End If
+            ' Test to make sure there is data in the DataReader Object 
+            If objDR.HasRows Then
 
-            '    Dim objDataFile As New StreamReader("EmployeeData.txt")
+                ' Iterate through DataReader one record at a time. 
+                Do While objDR.Read
 
-            '    Do While objDataFile.Peek <> -1
+                    ' Create Employee Object 
+                    Dim objItem As New Employee
 
-            '        strLine = objDataFile.ReadLine
+                    ' Get Key from DataReader record 
+                    Dim strKey As String = objDR.GetValue(0).ToString
 
-            '        Dim tempArray() As String = Split(strLine, ",")
+                    ' ITEM will load itself based on key. 
+                    objItem.Load(strKey)
 
-            '        Add(tempArray(0), tempArray(1), tempArray(2), CDate(tempArray(3)), _
-            '        tempArray(4), tempArray(5), tempArray(6), tempArray(7), tempArray(8))
-            '    Loop
+                    ' Add object to collection 
+                    Me.Add(objItem.SSNumber, objItem)
 
-            '    objDataFile.Close()
+                    ' Terminate new object 
+                    objItem = Nothing
+                Loop
+            Else
 
-        Catch objE As Exception
+                ' No data returned, Record not found. 
+                Throw New System.ApplicationException("Load Error! Record Not Found")
+            End If
 
-            Throw New System.Exception("Fetch Error: " & objE.Message)
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+            objDR.Close()
+            objDR = Nothing
+
+            ' Trap all Business Object, OleDB & general Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Load Error: " & objEx.Message)
+        Finally
+
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
         End Try
     End Sub
 
@@ -416,49 +445,27 @@ Public Class EmployeeList
     Protected Sub DataPortal_Save()
         'Iterates through Collection, Calling Each CHILD object.Save() method
         'CHILD Objects save themselves
-        'Step A- Begin Error trapping
+
+        ' Begin trapping errors
         Try
-            '    'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
-            '    Dim objDictionaryEntry As DictionaryEntry
-            '    Dim objChild As Employee
-
-            '    'Step 2-Use For..Each loop to iterate through Collection
-            '    For Each objDictionaryEntry In MyBase.Dictionary
-            '        'Step 3-Convert DictionaryEntry pointer returned to Type Person
-            '        objChild = CType(objDictionaryEntry.Value, Employee)
-
-            '        'Step 4-Call Child to Save itself
-            '        objChild.Save()
-
-            '    Next
-
-
-            Dim objWrite As New StreamWriter("EmployeeData.txt")
-
+            ' Create Temporary Person and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
-            Dim objEmployee As Employee
+            Dim objChild As Employee
 
+            ' Use For..Each loop to iterate through Collection 
             For Each objDictionaryEntry In MyBase.Dictionary
 
-                objEmployee = CType(objDictionaryEntry.Value, Employee)
+                ' Convert DictionaryEntry pointer returned to Type Person 
+                objChild = CType(objDictionaryEntry.Value, Employee)
 
-                objWrite.WriteLine(objEmployee.SSNumber & "," & _
-                objEmployee.FirstName & "," & _
-                objEmployee.LastName & "," & _
-                objEmployee.Birthdate & "," & _
-                objEmployee.Address & "," & _
-                objEmployee.Phone & "," & _
-                objEmployee.JobTitle & "," & _
-                objEmployee.UserName & "," & _
-                objEmployee.Password)
+                ' Call Child to Save itself 
+                objChild.Save()
             Next
 
-            objWrite.Close()
-
-            'Step B-Traps for general exceptions.  
+            ' Trap general exceptions.
         Catch objE As Exception
-            'Step C-Throw an general exceptions
-            Throw New System.Exception("Dataportal Save Error! " & objE.Message)
+            ' Throw an general exceptions
+            Throw New System.Exception("Save Error! " & objE.Message)
         End Try
     End Sub
 

@@ -14,6 +14,17 @@ Imports System.Configuration                            'Configuration File for 
 Public Class DVDList
     Inherits BusinessCollectionBase
 
+#Region "Database Connection"
+    ' Creating a connection potinter
+    Private Connection As OleDbConnection
+
+    ' Connection string with database location
+    Private Const connStr As String = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = Management.accdb"
+
+    ' Database command
+    Private cmd As New OleDbCommand
+#End Region
+
 #Region "Public Properties:"
     Public Shadows ReadOnly Property count As Integer
         Get
@@ -331,33 +342,69 @@ Public Class DVDList
     End Function
 
     Protected Sub DataPortal_Fetch(ByVal Key As String)
-        'Temporary implementation
+
+        ' Start trapping errors 
         Try
-            Dim strLine As String
+            Connection = New OleDbConnection(connStr)
 
-            If Not File.Exists("DVDData.txt") Then
+            ' Open database connection 
+            Connection.Open()
 
-                File.Create("DVDData.txt").Close()
+            ' Create SQL string to get all Primary Keys of DVDs 
+            Dim strSQL As String = "SELECT IDNumber FROM DVDData"
+
+            ' Create Command object 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Create DATAREADER object & Execute Query 
+            Dim objDR As OleDbDataReader = objCmd.ExecuteReader
+
+            ' Test to make sure there is data in the DataReader Object 
+            If objDR.HasRows Then
+
+                ' Iterate through DataReader one record at a time. 
+                Do While objDR.Read
+
+                    ' Create DVDData Object 
+                    Dim objItem As New DVD
+
+                    ' Get Key from DataReader record 
+                    Dim strKey As String = objDR.GetValue(0).ToString
+
+                    ' ITEM will load itself based on key. 
+                    objItem.Load(strKey)
+
+                    ' Add object to collection 
+                    Me.Add(objItem.IDNumber, objItem)
+
+                    ' Terminate new object 
+                    objItem = Nothing
+                Loop
+            Else
+
+                ' No data returned, Record not found. 
+                Throw New System.ApplicationException("Load Error! Record Not Found")
             End If
 
-            Dim objDataFile As New StreamReader("DVDData.txt")
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+            objDR.Close()
+            objDR = Nothing
 
-            Do While objDataFile.Peek <> -1
+            ' Trap all Business Object, OleDB & general Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Load Error: " & objEx.Message)
+        Finally
 
-                strLine = objDataFile.ReadLine
-
-                Dim tempArray() As String = Split(strLine, ",")
-
-                Add(tempArray(0), tempArray(1), tempArray(2), CType(System.Enum.Parse(GetType(Rating), tempArray(3)), Rating), _
-                CDec(tempArray(4)), CDec(tempArray(5)), CDec(tempArray(6)), CType(System.Enum.Parse(GetType(MovieCategory), _
-                tempArray(7)), MovieCategory), CType(System.Enum.Parse(GetType(DVDFormat), tempArray(8)), DVDFormat))
-            Loop
-
-            objDataFile.Close()
-
-        Catch objE As Exception
-
-            Throw New System.Exception("Fetch Error: " & objE.Message)
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
         End Try
     End Sub
 
@@ -368,49 +415,27 @@ Public Class DVDList
     Protected Sub DataPortal_Save()
         'Iterates through Collection, Calling Each CHILD object.Save() method
         'CHILD Objects save themselves
-        'Step A- Begin Error trapping
+
+        ' Begin Error trapping
         Try
-            '    'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
-            '    Dim objDictionaryEntry As DictionaryEntry
-            '    Dim objChild As DVD
-
-            '    'Step 2-Use For..Each loop to iterate through Collection
-            '    For Each objDictionaryEntry In MyBase.Dictionary
-            '        'Step 3-Convert DictionaryEntry pointer returned to Type Person
-            '        objChild = CType(objDictionaryEntry.Value, DVD)
-
-            '        'Step 4-Call Child to Save itself
-            '        objChild.Save()
-
-            '    Next
-
-
-            Dim objWrite As New StreamWriter("DVDData.txt")
-
+            ' Create Temporary Person and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
-            Dim objDVD As DVD
+            Dim objChild As DVD
 
+            ' Use For..Each loop to iterate through Collection
             For Each objDictionaryEntry In MyBase.Dictionary
 
-                objDVD = CType(objDictionaryEntry.Value, DVD)
+                ' Convert DictionaryEntry pointer returned to Type Person
+                objChild = CType(objDictionaryEntry.Value, DVD)
 
-                objWrite.WriteLine(objDVD.IDNumber & "," & _
-                objDVD.Title & "," & _
-                objDVD.Description & "," & _
-                objDVD.Rating.ToString & "," & _
-                objDVD.SalePrice.ToString & "," & _
-                objDVD.RentalRate.ToString & "," & _
-                objDVD.LateFee.ToString & "," & _
-                objDVD.Category.ToString & "," & _
-                objDVD.Format.ToString)
+                ' Call Child to Save itself
+                objChild.Save()
+
             Next
 
-            objWrite.Close()
-
-
-            'Step B-Traps for general exceptions.  
+            ' Traps for general exceptions.  
         Catch objE As Exception
-            'Step C-Throw an general exceptions
+            ' Throw an general exceptions
             Throw New System.Exception("Dataportal Save Error! " & objE.Message)
         End Try
     End Sub
@@ -425,40 +450,37 @@ Public Class DVDList
     End Sub
 
     Protected Sub DataPortal_Delete(ByVal Key As String)
-        'Iterates through Collection, Calling Each CHILD object.Delete() method
-        'CHILD Objects Delete themselves
+        ' Iterates through Collection, Calling Each CHILD object.Delete() method
+        ' CHILD Objects Delete themselves
 
-        'Step A- Begin Error trapping
+        ' Begin Error trapping
         Try
-            'Step 1-Step 1-Create Temporary Person and Dictionary object POINTERS
+            ' Create Temporary Person and Dictionary object POINTERS
             Dim objDictionaryEntry As DictionaryEntry
             Dim objItem As DVD
 
-            'Step 2-Use For..Each loop to iterate through Collection
+            ' Use For..Each loop to iterate through Collection
             For Each objDictionaryEntry In MyBase.Dictionary
-                'Step 3-Convert DictionaryEntry pointer returned to Type Person
+
+                ' Convert DictionaryEntry pointer returned to Type Person
                 objItem = CType(objDictionaryEntry.Value, DVD)
 
-                'Step 4-Find target object based on key
-                'YOU WILL NEED TO SELECT THE CORRECT PROPERTY
+                ' Find target object based on key
                 If objItem.IDNumber = Key Then
 
-                    'Step 5-Object deletes itself
+                    ' Object deletes itself
                     objItem.ImmediateDelete(Key)
 
                 End If
 
             Next
-            'Step B-Traps for general exceptions.  
+            ' Traps for general exceptions.  
         Catch objE As Exception
-            'Step C-Throw an general exceptions
+            ' Throw an general exceptions
             Throw New System.Exception("Dataportal Delete Error! " & objE.Message)
         End Try
-
-
     End Sub
 
 #End Region
-
 
 End Class

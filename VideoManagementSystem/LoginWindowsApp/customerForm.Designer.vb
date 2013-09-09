@@ -107,7 +107,7 @@ Partial Class customerForm
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(35, 85)
+        Me.Label4.Location = New System.Drawing.Point(34, 85)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(58, 13)
         Me.Label4.TabIndex = 7
@@ -157,7 +157,7 @@ Partial Class customerForm
         'exitButton
         '
         Me.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.exitButton.Location = New System.Drawing.Point(594, 315)
+        Me.exitButton.Location = New System.Drawing.Point(594, 311)
         Me.exitButton.Name = "exitButton"
         Me.exitButton.Size = New System.Drawing.Size(75, 23)
         Me.exitButton.TabIndex = 22
@@ -175,7 +175,7 @@ Partial Class customerForm
         '
         'listAllButton
         '
-        Me.listAllButton.Location = New System.Drawing.Point(243, 296)
+        Me.listAllButton.Location = New System.Drawing.Point(231, 311)
         Me.listAllButton.Name = "listAllButton"
         Me.listAllButton.Size = New System.Drawing.Size(75, 23)
         Me.listAllButton.TabIndex = 21
@@ -184,7 +184,7 @@ Partial Class customerForm
         '
         'printButton
         '
-        Me.printButton.Location = New System.Drawing.Point(41, 315)
+        Me.printButton.Location = New System.Drawing.Point(37, 315)
         Me.printButton.Name = "printButton"
         Me.printButton.Size = New System.Drawing.Size(75, 23)
         Me.printButton.TabIndex = 19
@@ -211,7 +211,7 @@ Partial Class customerForm
         '
         'editButton
         '
-        Me.editButton.Location = New System.Drawing.Point(41, 286)
+        Me.editButton.Location = New System.Drawing.Point(37, 286)
         Me.editButton.Name = "editButton"
         Me.editButton.Size = New System.Drawing.Size(75, 23)
         Me.editButton.TabIndex = 17
@@ -230,7 +230,7 @@ Partial Class customerForm
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(35, 55)
+        Me.Label8.Location = New System.Drawing.Point(34, 55)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(58, 13)
         Me.Label8.TabIndex = 1

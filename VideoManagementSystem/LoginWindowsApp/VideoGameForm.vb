@@ -11,15 +11,23 @@ Public Class VideoGameForm
     End Sub
 
     Private Sub VideoGameForm_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
-        objVideoGameList.Save()
-        dgVideoGameList.DataSource = Nothing
-        objVideoGameList.Clear()
-        objVideoGame = Nothing
+        Try
+
+            objVideoGameList.Save()
+            dgVideoGameList.DataSource = Nothing
+            objVideoGameList.Clear()
+            objVideoGame = Nothing
+
+        Catch objE As Exception
+
+            MessageBox.Show(objE.Message)
+        End Try
     End Sub
 
     Private Sub VideoGameForm_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Try
-            objVideoGameList.Load("")
+            objVideoGameList = New VideoGameList
+            objVideoGameList.Load()
 
         Catch objE As Exception
 
@@ -297,7 +305,7 @@ Public Class VideoGameForm
     Private Sub removeButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles removeButton.Click
         Try
             Dim bolResults As Boolean
-            objVideoGameList.DeferredDelete(idNumberTextBox.Text.Trim)
+            objVideoGameList.ImmediateDelete(idNumberTextBox.Text.Trim)
             bolResults = objVideoGameList.Remove(idNumberTextBox.Text.Trim)
 
             If bolResults <> True Then

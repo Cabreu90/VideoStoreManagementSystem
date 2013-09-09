@@ -12,13 +12,10 @@ Public Class employeeForm
     Private Sub employeeForm_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
         Try
 
-
             objTemp = Nothing
-
             objEmployeeList.Save()
             dgEmployeeList.DataSource = Nothing
             objEmployeeList.Clear()
-
 
         Catch objE As Exception
 
@@ -29,7 +26,9 @@ Public Class employeeForm
     Private Sub employeeForm_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         'load objects
         Try
-            objEmployeeList.Load("")
+            objEmployeeList = New EmployeeList
+
+            objEmployeeList.Load()
 
         Catch objE As Exception
             MessageBox.Show(objE.Message)
@@ -93,8 +92,6 @@ Public Class employeeForm
             CDate(birthdateTextBox.Text), addressTextBox.Text.Trim, phoneTextBox.Text.Trim, _
             jobtitleTextBox.Text.Trim, unameTextBox.Text.Trim, pwordTextBox.Text.Trim)
 
-
-
         Catch objX As ArgumentNullException
 
             MessageBox.Show(objX.Message)
@@ -112,8 +109,6 @@ Public Class employeeForm
     Private Sub editButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles editButton.Click
         Try
             Dim bolResults As Boolean
-
-            
 
             bolResults = objEmployeeList.Edit(ssnumberTextBox.Text.Trim, fnameTextBox.Text.Trim, lnameTextBox.Text.Trim, _
             CDate(birthdateTextBox.Text), addressTextBox.Text.Trim, phoneTextBox.Text.Trim, _
@@ -137,7 +132,7 @@ Public Class employeeForm
         Try
             Dim bolResults As Boolean
 
-            objEmployeeList.DeferredDelete(ssnumberTextBox.Text.Trim)
+            objEmployeeList.ImmediateDelete(ssnumberTextBox.Text.Trim)
             bolResults = objEmployeeList.Remove(ssnumberTextBox.Text.Trim)
 
 

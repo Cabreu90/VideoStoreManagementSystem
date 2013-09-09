@@ -22,6 +22,17 @@ Imports System.Configuration
 Public Class Employee
     Inherits Person
 
+#Region "Database Connection"
+    ' Creating a connection potinter
+    Private Connection As OleDbConnection
+
+    ' Connection string with dabase location
+    Private Const connStr As String = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source = Management.accdb"
+
+    ' Dabase command
+    Private cmd As New OleDbCommand
+#End Region
+
 #Region "Private Data:"
     Private m_JobTitle As String
     Private m_UserName As String
@@ -188,18 +199,227 @@ Public Class Employee
     End Function
 
     Protected Sub DataPortal_Fetch(ByVal Key As String)
+
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create SQL string 
+            Dim strSQL As String = "SELECT * FROM Employee WHERE SSNumber = ?"
+
+            ' Create Command object, pass query/connection & Add paramters 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+            objCmd.Parameters.Add("@SSNumber", OleDbType.VarChar).Value = Key
+
+            ' Create DATAREADER object & Execute Query 
+            Dim objDR As OleDbDataReader = objCmd.ExecuteReader
+
+            ' Check to make sure there is data in the DataReader Object 
+            If objDR.HasRows Then
+
+                ' Call Read() Method to point and read the first record 
+                objDR.Read()
+
+                ' Extract data from a row and populate object. 
+                Me.SSNumber = CStr(objDR.Item(0))
+                Me.FirstName = CStr(objDR.Item(1))
+                Me.LastName = CStr(objDR.Item(2))
+                Me.Birthdate = CDate(objDR.Item(3))
+                Me.Address = CStr(objDR.Item(4))
+                Me.Phone = CStr(objDR.Item(5))
+                Me.JobTitle = CStr(objDR.Item(6))
+                Me.UserName = CStr(objDR.Item(7))
+                Me.Password = CStr(objDR.Item(8))
+            Else
+
+                ' If no data is returned, throw error 
+                Throw New System.ApplicationException("Load Error! Emplyee Not Found")
+            End If
+
+            ' Terminate ADO Objects 
+            objDR.Close()
+            objDR = Nothing
+            objCmd.Dispose()
+
+            ' Trap for General Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Load Error: " & objEx.Message)
+        Finally
+
+            ' Terminate connection
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        'At the end, set New flag to False. NOT Dirty since found in database
         MyBase.MarkOld()
     End Sub
 
     Protected Sub DataPortal_Update()
+
+        ' Start Error Trapping 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create Query, Command Object & initialize 
+            Dim strSQL As String = "UPDATE Employee SET FirstName = ?, LastName = ?, BirthDate = ?," _
+                                   & "Address = ?, Phone = ?, JobTitle = ?, Username = ?, empPassword = ? WHERE SSNumber = ?"
+
+            ' Create Command object, pass string and connection object as arguments 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Add Parameter to Collection & Set Value 
+            objCmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = Me.FirstName
+            objCmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = Me.LastName
+            objCmd.Parameters.Add("@BirthDate", OleDbType.Date).Value = Me.Birthdate
+            objCmd.Parameters.Add("@Address", OleDbType.VarChar).Value = Me.Address
+            objCmd.Parameters.Add("@Phone", OleDbType.VarChar).Value = Me.Phone
+            objCmd.Parameters.Add("@JobTitle", OleDbType.VarChar).Value = Me.JobTitle
+            objCmd.Parameters.Add("@Username", OleDbType.VarChar).Value = Me.UserName
+            objCmd.Parameters.Add("@empPassword", OleDbType.Char).Value = Me.Password
+            objCmd.Parameters.Add("@SSNumber", OleDbType.VarChar).Value = Me.SSNumber
+
+            ' Execute Non-Row Quer
+            Dim intRecordsAffected As Integer = objCmd.ExecuteNonQuery()
+
+            ' Test result and throw exception if it fails 
+            If intRecordsAffected <> 1 Then
+                Throw New System.ApplicationException("UPDATE Query Failed")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+
+            ' Trap for App General Exceptions 
+        Catch objBOEx As NotSupportedException
+            Throw New System.NotSupportedException(objBOEx.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Update Error: " & objEx.Message)
+        Finally
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        ' Set New flag to False since exist in database/and is Not dirty any longer
         MyBase.MarkOld()
     End Sub
 
     Protected Sub DataPortal_Insert()
+
+        ' Start Error Trapping 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create Command/Query 
+            Dim strSQL As String = "INSERT INTO Employee VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+            ' Create Command object, pass connection info as arguments 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Add Paramter to Pareameters Collection 
+            objCmd.Parameters.Add("@SSNumber", OleDbType.VarChar).Value = Me.SSNumber
+            objCmd.Parameters.Add("@FirstName", OleDbType.VarChar).Value = Me.FirstName
+            objCmd.Parameters.Add("@LastName", OleDbType.VarChar).Value = Me.LastName
+            objCmd.Parameters.Add("@BirthDate", OleDbType.Date).Value = Me.Birthdate
+            objCmd.Parameters.Add("@Address", OleDbType.VarChar).Value = Me.Address
+            objCmd.Parameters.Add("@Phone", OleDbType.VarChar).Value = Me.Phone
+            objCmd.Parameters.Add("@JobTitle", OleDbType.VarChar).Value = Me.JobTitle
+            objCmd.Parameters.Add("@UserName", OleDbType.VarChar).Value = Me.UserName
+            objCmd.Parameters.Add("@empPassword", OleDbType.VarChar).Value = Me.Password
+
+            ' Execute Non-Row Query 
+            Dim intRecordsAffected As Integer = objCmd.ExecuteNonQuery()
+
+            ' Test result and throw exception if failed
+            If intRecordsAffected <> 1 Then
+                Throw New System.ApplicationException("Insert Query Failed!")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+
+            ' Trap for App General Exceptions 
+        Catch objBO As NotSupportedException
+            Throw New System.NotSupportedException(objBO.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException(objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Insert Error: " & objEx.Message)
+        Finally
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        ' Set New flag to False since exist in database/and is Not new any longer
         MyBase.MarkOld()
     End Sub
 
     Protected Sub DataPortal_Delete(ByVal Key As String)
+
+        ' Start Error Trapping 
+        Try
+            Connection = New OleDbConnection(connStr)
+
+            ' Open connection 
+            Connection.Open()
+
+            ' Create SQL command string
+            Dim strSQL As String = "DELETE FROM Employee WHERE SSNumber = ?"
+
+            ' Create Command object, pass string and connection object as arguments 
+            Dim objCmd As New OleDbCommand(strSQL, Connection)
+
+            ' Add Parameter to Collection & Set Value 
+            objCmd.Parameters.Add("@SSNumber", OleDbType.VarChar).Value = Key
+
+            ' Execute Non-Row Query 
+            Dim intRecordsAffected As Integer = objCmd.ExecuteNonQuery()
+
+            ' Test result and throw exception if it fails
+            If intRecordsAffected <> 1 Then
+                Throw New System.ApplicationException("DELETE Query Failed!")
+            End If
+
+            ' Terminate Command Object 
+            objCmd.Dispose()
+            objCmd = Nothing
+
+            ' Trap for App General Exceptions 
+        Catch objBO As NotSupportedException
+            Throw New System.NotSupportedException("Delete Error: " & objBO.Message)
+        Catch objA As ApplicationException
+            Throw New System.ApplicationException("Delete Error: " & objA.Message)
+        Catch objEx As Exception
+            Throw New System.Exception("Delete Error: " & objEx.Message)
+        Finally
+            ' Terminate connection 
+            Connection.Close()
+            Connection.Dispose()
+            Connection = Nothing
+        End Try
+
+        'Object no longer in database, therefore reset our status to be a new object
         MyBase.MarkNew()
     End Sub
 

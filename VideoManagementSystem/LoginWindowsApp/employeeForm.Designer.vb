@@ -91,7 +91,7 @@ Partial Class employeeForm
         '
         'printButton
         '
-        Me.printButton.Location = New System.Drawing.Point(571, 339)
+        Me.printButton.Location = New System.Drawing.Point(490, 339)
         Me.printButton.Name = "printButton"
         Me.printButton.Size = New System.Drawing.Size(75, 23)
         Me.printButton.TabIndex = 25
@@ -109,7 +109,7 @@ Partial Class employeeForm
         '
         'printAllButton
         '
-        Me.printAllButton.Location = New System.Drawing.Point(490, 339)
+        Me.printAllButton.Location = New System.Drawing.Point(409, 339)
         Me.printAllButton.Name = "printAllButton"
         Me.printAllButton.Size = New System.Drawing.Size(75, 23)
         Me.printAllButton.TabIndex = 26
@@ -119,7 +119,7 @@ Partial Class employeeForm
         'exitButton
         '
         Me.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.exitButton.Location = New System.Drawing.Point(409, 339)
+        Me.exitButton.Location = New System.Drawing.Point(571, 339)
         Me.exitButton.Name = "exitButton"
         Me.exitButton.Size = New System.Drawing.Size(75, 23)
         Me.exitButton.TabIndex = 27
