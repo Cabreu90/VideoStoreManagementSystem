@@ -84,6 +84,18 @@
     <Compile Include="customerForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="customerInfoForm.Designer.vb">
+      <DependentUpon>customerInfoForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="customerInfoForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="customerRegistrationForm.Designer.vb">
+      <DependentUpon>customerRegistrationForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="customerRegistrationForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dvdForm.Designer.vb">
       <DependentUpon>dvdForm.vb</DependentUpon>
     </Compile>
@@ -125,6 +137,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="RentForm.Designer.vb">
+      <DependentUpon>RentForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="RentForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="VideoGameForm.Designer.vb">
       <DependentUpon>VideoGameForm.vb</DependentUpon>
     </Compile>
@@ -145,6 +163,12 @@
     <EmbeddedResource Include="customerForm.resx">
       <DependentUpon>customerForm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="customerInfoForm.resx">
+      <DependentUpon>customerInfoForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="customerRegistrationForm.resx">
+      <DependentUpon>customerRegistrationForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="dvdForm.resx">
       <DependentUpon>dvdForm.vb</DependentUpon>
     </EmbeddedResource>
@@ -162,6 +186,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RentForm.resx">
+      <DependentUpon>RentForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VideoGameForm.resx">
       <DependentUpon>VideoGameForm.vb</DependentUpon>

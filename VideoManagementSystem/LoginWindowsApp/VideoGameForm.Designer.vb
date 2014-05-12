@@ -83,7 +83,8 @@ Partial Class VideoGameForm
         '
         'ratingComboBox
         '
-        Me.ratingComboBox.FormattingEnabled = true
+        Me.ratingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.ratingComboBox.FormattingEnabled = True
         Me.ratingComboBox.Items.AddRange(New Object() {"G", "PG", "PG-13", "NC-17", "R", "NONE"})
         Me.ratingComboBox.Location = New System.Drawing.Point(81, 187)
         Me.ratingComboBox.Name = "ratingComboBox"

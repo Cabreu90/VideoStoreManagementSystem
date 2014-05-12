@@ -261,6 +261,7 @@ Partial Class dvdForm
         '
         'ratingComboBox
         '
+        Me.ratingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ratingComboBox.FormattingEnabled = True
         Me.ratingComboBox.Items.AddRange(New Object() {"G", "PG", "PG-13", "NC-17", "R", "NONE"})
         Me.ratingComboBox.Location = New System.Drawing.Point(81, 196)

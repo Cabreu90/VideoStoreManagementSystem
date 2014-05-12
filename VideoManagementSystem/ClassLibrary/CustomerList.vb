@@ -459,7 +459,7 @@ Public Class CustomerList
             ' Traps for general exceptions.  
         Catch objE As Exception
             ' Throw an general exceptions
-            Throw New System.Exception("Dataportal Delete Error! " & objE.Message)
+            Throw New System.Exception("Dataportal " & objE.Message)
         End Try
     End Sub
 
