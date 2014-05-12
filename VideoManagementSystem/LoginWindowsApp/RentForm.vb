@@ -23,7 +23,7 @@ Public Class RentForm
     ''' <param name="sender"></param>
     ''' <param name="e"></param>
     ''' <remarks></remarks>
-    Private Sub CustomerTextBox_TextLeave(sender As System.Object, e As System.EventArgs) Handles CustomerTextBox.Leave
+    Private Sub CustomerTextBox_TextLeave(sender As System.Object, e As System.EventArgs) Handles idNumberTextBox.Enter
         Try
             objCustomer = objCustomerList.Item(CustomerTextBox.Text.Trim)
 
@@ -79,6 +79,9 @@ Public Class RentForm
 
     Private Sub rentForm_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
         Try
+
+            CustomerTextBox.Clear()
+            CustomerTextBox.ReadOnly = False
 
             objVideoGame = Nothing
             dvdobj = Nothing
