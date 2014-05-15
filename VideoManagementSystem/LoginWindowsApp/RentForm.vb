@@ -103,21 +103,58 @@ Public Class RentForm
     End Sub
 
     Private Sub addButton_Click(sender As System.Object, e As System.EventArgs) Handles addButton.Click
+
+        Dim row As String()
+
         ' Setting DataGridView
         dgOrderList.ColumnCount = 3
         dgOrderList.Columns(0).Name = "ProductID"
         dgOrderList.Columns(1).Name = "Item"
         dgOrderList.Columns(2).Name = "Amount"
 
+        Try
+            If (productComboBox.SelectedItem.ToString = "DVD") Then
+                dvdobj = objDVDList.Item(idNumberTextBox.Text.Trim)
 
-        ' Filling datagrid with data
-        Dim row As String() = New String() {idNumberTextBox.Text.Trim, productComboBox.SelectedItem.ToString, amountTextBox.Text.Trim}
-        dgOrderList.Rows.Add(row)
+                If dvdobj Is Nothing Then
+                    MessageBox.Show("DVD not found!")
+                Else
+                    ' Filling datagrid with DVD data
+                    row = New String() {idNumberTextBox.Text.Trim, productComboBox.SelectedItem.ToString, amountTextBox.Text.Trim}
+                    dgOrderList.Rows.Add(row)
 
-        ' Getting form ready for next product.
-        idNumberTextBox.Text = ""
-        amountTextBox.Text = ""
+                    'todo: dvd code
 
+                End If
+            ElseIf (productComboBox.SelectedItem.ToString = "VideoGame") Then
+                objVideoGame = objVideoGameList.Item(idNumberTextBox.Text.Trim)
+
+                If objVideoGame Is Nothing Then
+                    MessageBox.Show("VideoGame not found!")
+                Else
+                    ' Filling datagrid with Video Game data
+                    row = New String() {idNumberTextBox.Text.Trim, productComboBox.SelectedItem.ToString, amountTextBox.Text.Trim}
+                    dgOrderList.Rows.Add(row)
+
+                    'todo: Video Game code 
+
+                End If
+
+            End If
+
+
+            ' Getting form ready for next product.
+            idNumberTextBox.Text = ""
+            amountTextBox.Text = ""
+
+        Catch objX As ArgumentNullException
+
+            MessageBox.Show(objX.Message)
+
+        Catch objE As Exception
+
+            MessageBox.Show(objE.Message)
+        End Try
     End Sub
 
 
