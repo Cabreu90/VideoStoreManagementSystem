@@ -143,6 +143,12 @@
     <Compile Include="RentForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="returnsForm.Designer.vb">
+      <DependentUpon>returnsForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="returnsForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="VideoGameForm.Designer.vb">
       <DependentUpon>VideoGameForm.vb</DependentUpon>
     </Compile>
@@ -189,6 +195,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RentForm.resx">
       <DependentUpon>RentForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="returnsForm.resx">
+      <DependentUpon>returnsForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VideoGameForm.resx">
       <DependentUpon>VideoGameForm.vb</DependentUpon>

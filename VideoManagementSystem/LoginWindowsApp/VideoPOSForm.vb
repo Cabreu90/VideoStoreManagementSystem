@@ -22,4 +22,10 @@
         RentForm.ShowDialog()
         Me.Show()
     End Sub
+
+    Private Sub returnsButton_Click(sender As System.Object, e As System.EventArgs) Handles returnsButton.Click
+        Me.Hide()
+        returnsForm.ShowDialog()
+        Me.Show()
+    End Sub
 End Class
