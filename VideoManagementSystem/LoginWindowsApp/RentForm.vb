@@ -70,22 +70,32 @@ Public Class RentForm
         End Try
     End Sub
 
-
+    ''' <summary>
+    ''' Saving changes to database, reseting controls, and destroying objects after closing form.
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    ''' <remarks></remarks>
     Private Sub rentForm_FormClosed(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
         Try
-
+            ' Getting clearing text box
             customerTextBox.Clear()
             customerTextBox.ReadOnly = False
 
+            ' Destroying objects
             objVideoGame = Nothing
             dvdobj = Nothing
             objCustomer = Nothing
 
-            'objCustomerList.Save()
+            ' Saving changes to database
+            objCustomerList.Save()
+            objVideoGameList.Save()
+            objDVDList.Save()
 
-
+            ' Clearing DataGridView
             dgOrderList.DataSource = Nothing
 
+            ' Dstroying objects in the list/collection
             objCustomerList.Clear()
             objVideoGameList.Clear()
             objDVDList.Clear()

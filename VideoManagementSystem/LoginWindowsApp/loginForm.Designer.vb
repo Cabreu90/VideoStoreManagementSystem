@@ -28,6 +28,7 @@ Partial Class loginForm
         Me.usernameTextBox = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'cancellButton
@@ -81,6 +82,15 @@ Partial Class loginForm
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Username:"
         '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(150, 74)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(110, 13)
+        Me.Label3.TabIndex = 6
+        Me.Label3.Text = "App By Cesarin Abreu"
+        '
         'loginForm
         '
         Me.AcceptButton = Me.okButton
@@ -88,6 +98,7 @@ Partial Class loginForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.cancellButton
         Me.ClientSize = New System.Drawing.Size(284, 96)
+        Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.cancellButton)
         Me.Controls.Add(Me.okButton)
         Me.Controls.Add(Me.passwordTextBox)
@@ -107,5 +118,6 @@ Partial Class loginForm
     Friend WithEvents usernameTextBox As System.Windows.Forms.TextBox
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents Label3 As System.Windows.Forms.Label
 
 End Class

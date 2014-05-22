@@ -28,6 +28,7 @@ Partial Class VideoPOSForm
         Me.regButton = New System.Windows.Forms.Button()
         Me.infoButton = New System.Windows.Forms.Button()
         Me.exitButton = New System.Windows.Forms.Button()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'Label1
@@ -85,12 +86,22 @@ Partial Class VideoPOSForm
         Me.exitButton.Text = "Exit"
         Me.exitButton.UseVisualStyleBackColor = True
         '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(48, 294)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(88, 13)
+        Me.Label2.TabIndex = 6
+        Me.Label2.Text = "By Cesarin Abreu"
+        '
         'VideoPOSForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.exitButton
         Me.ClientSize = New System.Drawing.Size(206, 316)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.exitButton)
         Me.Controls.Add(Me.infoButton)
         Me.Controls.Add(Me.regButton)
@@ -99,8 +110,9 @@ Partial Class VideoPOSForm
         Me.Controls.Add(Me.Label1)
         Me.Name = "VideoPOSForm"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "VideoPOSForm"
+        Me.Text = "Store POS"
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents Label1 As System.Windows.Forms.Label
@@ -109,4 +121,5 @@ Partial Class VideoPOSForm
     Friend WithEvents regButton As System.Windows.Forms.Button
     Friend WithEvents infoButton As System.Windows.Forms.Button
     Friend WithEvents exitButton As System.Windows.Forms.Button
+    Friend WithEvents Label2 As System.Windows.Forms.Label
 End Class

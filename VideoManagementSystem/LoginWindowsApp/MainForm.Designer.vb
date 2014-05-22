@@ -25,6 +25,7 @@ Partial Class MainForm
         Me.videoButton = New System.Windows.Forms.Button()
         Me.backEndButton = New System.Windows.Forms.Button()
         Me.exitButton = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'videoButton
@@ -55,6 +56,15 @@ Partial Class MainForm
         Me.exitButton.Text = "Exit"
         Me.exitButton.UseVisualStyleBackColor = True
         '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(51, 184)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(88, 13)
+        Me.Label1.TabIndex = 3
+        Me.Label1.Text = "By Cesarin Abreu"
+        '
         'MainForm
         '
         Me.AcceptButton = Me.videoButton
@@ -62,6 +72,7 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.exitButton
         Me.ClientSize = New System.Drawing.Size(161, 206)
+        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.exitButton)
         Me.Controls.Add(Me.backEndButton)
         Me.Controls.Add(Me.videoButton)
@@ -69,9 +80,11 @@ Partial Class MainForm
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Main Form"
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents videoButton As System.Windows.Forms.Button
     Friend WithEvents backEndButton As System.Windows.Forms.Button
     Friend WithEvents exitButton As System.Windows.Forms.Button
+    Friend WithEvents Label1 As System.Windows.Forms.Label
 End Class

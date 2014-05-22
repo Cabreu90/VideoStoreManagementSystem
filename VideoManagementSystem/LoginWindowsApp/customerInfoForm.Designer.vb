@@ -74,6 +74,7 @@ Partial Class customerInfoForm
         Me.phoneTextBox.ReadOnly = True
         Me.phoneTextBox.Size = New System.Drawing.Size(182, 20)
         Me.phoneTextBox.TabIndex = 26
+        Me.phoneTextBox.TabStop = False
         '
         'Label7
         '
@@ -92,6 +93,7 @@ Partial Class customerInfoForm
         Me.addressTextBox.ReadOnly = True
         Me.addressTextBox.Size = New System.Drawing.Size(182, 20)
         Me.addressTextBox.TabIndex = 24
+        Me.addressTextBox.TabStop = False
         '
         'Label6
         '
@@ -110,6 +112,7 @@ Partial Class customerInfoForm
         Me.birthdateTextBox.ReadOnly = True
         Me.birthdateTextBox.Size = New System.Drawing.Size(182, 20)
         Me.birthdateTextBox.TabIndex = 22
+        Me.birthdateTextBox.TabStop = False
         '
         'Label5
         '
@@ -128,6 +131,7 @@ Partial Class customerInfoForm
         Me.lnameTextBox.ReadOnly = True
         Me.lnameTextBox.Size = New System.Drawing.Size(181, 20)
         Me.lnameTextBox.TabIndex = 20
+        Me.lnameTextBox.TabStop = False
         '
         'Label4
         '
@@ -146,6 +150,7 @@ Partial Class customerInfoForm
         Me.fnameTextBox.ReadOnly = True
         Me.fnameTextBox.Size = New System.Drawing.Size(182, 20)
         Me.fnameTextBox.TabIndex = 18
+        Me.fnameTextBox.TabStop = False
         '
         'Label3
         '
@@ -164,6 +169,7 @@ Partial Class customerInfoForm
         Me.ssnumberTextBox.ReadOnly = True
         Me.ssnumberTextBox.Size = New System.Drawing.Size(182, 20)
         Me.ssnumberTextBox.TabIndex = 16
+        Me.ssnumberTextBox.TabStop = False
         '
         'Label2
         '

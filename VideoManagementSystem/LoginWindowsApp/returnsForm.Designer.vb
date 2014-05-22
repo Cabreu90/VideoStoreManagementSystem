@@ -34,6 +34,8 @@ Partial Class returnsForm
         Me.Label1 = New System.Windows.Forms.Label()
         Me.addButton = New System.Windows.Forms.Button()
         Me.exitButton = New System.Windows.Forms.Button()
+        Me.nextButton = New System.Windows.Forms.Button()
+        Me.removeButton = New System.Windows.Forms.Button()
         CType(Me.dgOrderList, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -122,11 +124,11 @@ Partial Class returnsForm
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(215, 29)
         Me.Label1.TabIndex = 71
-        Me.Label1.Text = "Product Rent Screen"
+        Me.Label1.Text = "Returns Screen"
         '
         'addButton
         '
-        Me.addButton.Location = New System.Drawing.Point(247, 323)
+        Me.addButton.Location = New System.Drawing.Point(247, 297)
         Me.addButton.Name = "addButton"
         Me.addButton.Size = New System.Drawing.Size(75, 23)
         Me.addButton.TabIndex = 69
@@ -136,18 +138,38 @@ Partial Class returnsForm
         'exitButton
         '
         Me.exitButton.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.exitButton.Location = New System.Drawing.Point(662, 323)
+        Me.exitButton.Location = New System.Drawing.Point(662, 297)
         Me.exitButton.Name = "exitButton"
         Me.exitButton.Size = New System.Drawing.Size(46, 27)
         Me.exitButton.TabIndex = 70
         Me.exitButton.Text = "Exit"
         Me.exitButton.UseVisualStyleBackColor = True
         '
+        'nextButton
+        '
+        Me.nextButton.Location = New System.Drawing.Point(601, 297)
+        Me.nextButton.Name = "nextButton"
+        Me.nextButton.Size = New System.Drawing.Size(55, 27)
+        Me.nextButton.TabIndex = 78
+        Me.nextButton.Text = "Next"
+        Me.nextButton.UseVisualStyleBackColor = True
+        '
+        'removeButton
+        '
+        Me.removeButton.Location = New System.Drawing.Point(328, 297)
+        Me.removeButton.Name = "removeButton"
+        Me.removeButton.Size = New System.Drawing.Size(75, 23)
+        Me.removeButton.TabIndex = 77
+        Me.removeButton.Text = "Remove"
+        Me.removeButton.UseVisualStyleBackColor = True
+        '
         'returnsForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(720, 353)
+        Me.Controls.Add(Me.nextButton)
+        Me.Controls.Add(Me.removeButton)
         Me.Controls.Add(Me.CustomerTextBox)
         Me.Controls.Add(Me.Label8)
         Me.Controls.Add(Me.amountTextBox)
@@ -161,7 +183,7 @@ Partial Class returnsForm
         Me.Controls.Add(Me.addButton)
         Me.Controls.Add(Me.exitButton)
         Me.Name = "returnsForm"
-        Me.Text = "returnsForm"
+        Me.Text = "Returns"
         CType(Me.dgOrderList, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -179,4 +201,6 @@ Partial Class returnsForm
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents addButton As System.Windows.Forms.Button
     Friend WithEvents exitButton As System.Windows.Forms.Button
+    Friend WithEvents nextButton As System.Windows.Forms.Button
+    Friend WithEvents removeButton As System.Windows.Forms.Button
 End Class
